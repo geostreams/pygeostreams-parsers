@@ -6,6 +6,7 @@ wheel==0.24.0
 pytest==3.0.3
 pytest-pep8==1.0.6
 urllib3==1.14
+xlrd==1.1.0
 python-dateutil
 git+https://opensource.ncsa.illinois.edu/bitbucket/scm/geod/pygeotemporal.git#egg=pygeotemporal
 git+https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/pyclowder2.git#egg=pyclowder2
