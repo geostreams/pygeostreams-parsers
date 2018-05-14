@@ -13,3 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [GLM-112](https://opensource.ncsa.illinois.edu/jira/browse/GLM-112)
 - Great Lakes Monitoring/ Great Lakes to the Gulf USGS Parser
   [GLM-77](https://opensource.ncsa.illinois.edu/jira/browse/GLM-77)
+- IMLCZO general workflow scripts
+  [IMLCZO-217](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-217)
+- Added IMLCZO Mahomet Ingestion style of script
+  [IMLCZO-228](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-228)
+- Added Combination Script for get-concat-parse-upload
+  [IMLCZO-233](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-233)

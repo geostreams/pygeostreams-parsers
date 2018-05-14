@@ -1,0 +1,47 @@
+inputs:
+  location: "http://localhost:9000"
+  key: "clowder_key"
+  user: "clowder_username"
+  password: "clowder_password"
+  file_path: "full-path/pygeotemporal_parsers/"
+  timestamp: "timestamp"
+  headers: 4
+  verify: "unique"
+  file_type: ".dat"
+  new_files: "parse/new_files.csv"
+  aggregate: "parse/aggregate"
+  aggregate_file_type: ".csv"
+  parse: "parse/parse.csv"
+  downloads: "parse/downloaded_files"
+config:
+  dataset_source_id: "DatasetID"
+  dataset_upload_id: "DatasetID"
+  sensor:
+      geometry:
+          type": Point
+          coordinates: [-88.00, 40.00, 0]
+      properties:
+          region: "Region"
+          type:
+              id: "type_id"
+              title: "type_title"
+              location: "location_name"
+              network: ""
+          elevation:
+              mean_sea_level: 0
+              offset: 0
+              offset_units: "meters"
+          name: ""
+          popupContent: ""
+          huc: ""
+parameters:
+  abc: "Instrument Name 01"
+  def: "Instrument Name 01"
+  ghi: "Instrument Name 02"
+  jkl: "Instrument Name 02"
+sensors:
+  - "Instrument Name 01"
+  - "Instrument Name 02"
+sensorscreate:
+  - "Instrument Name 01"
+  - "Instrument Name 02"

@@ -1,0 +1,48 @@
+inputs:
+  location: "http://localhost:9000"
+  key: "clowder_key"
+  user: "clowder_username"
+  password: "clowder_password"
+  file_path: "full-dir-path-to-new-files"
+  timestamp: "start_time"
+  headers: 1
+  file_type: ".csv"
+  new_files: ""
+  aggregate: ""
+  aggregate_file_type: ".csv"
+  parse: "parseMahomet.csv"
+  downloads: ""
+config:
+  sensor:
+      geometry:
+          type": Point
+          coordinates: [-88.4449935793094, 40.1712060862677, 0]
+      properties:
+          region: "Illinois"
+          type:
+              id: "isws"
+              title: "ISWS Stream and Nutrient Station"
+              location: "Mahomet"
+              network: ""
+          elevation:
+              mean_sea_level: 0
+              offset: 0
+              offset_units: "meters"
+          name: "ISWS105"
+          popupContent: "ISWS105 at Mahomet"
+          huc: ""
+header_timestamp: Date&Time
+header_to_parameters:
+  Site_ID: "name"
+  Date&Time: "start_time"
+  Stage(meters): "river-stage-m"
+  Discharge(cms): "discharge-cms"
+  DataStatus: "qaqc"
+  ISCOSample: "isco-sample"
+parameters:
+  river-stage-m: "ISWS105"
+  discharge-cms: "ISWS105"
+  qaqc: "ISWS105"
+  isco-sample: "ISWS105"
+sensors:
+  - "ISWS105"

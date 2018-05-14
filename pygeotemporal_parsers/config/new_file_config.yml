@@ -1,0 +1,37 @@
+inputs:
+  location: "http://localhost:9000"
+  key: "clowder_key"
+  user: "clowder_username"
+  password: "clowder_password"
+  file_path: "full-dir-path-to-new-files"
+  timestamp: "start_time"
+  file_type: ".csv"
+  parse: "parse.csv"
+config:
+  sensor:
+      geometry:
+          type": Point
+          coordinates: [-88.00, 40.00, 0]
+      properties:
+          region: "Region"
+          type:
+              id: "type_id"
+              title: "type_title"
+              location: "location_name"
+              network: ""
+          elevation:
+              mean_sea_level: 0
+              offset: 0
+              offset_units: "meters"
+          name: ""
+          popupContent: ""
+          huc: ""
+header_timestamp: time_column_name
+header_to_parameters:
+  ColumnName01: "parameter01"
+  ColumnName02: "parameter02"
+parameters:
+  parameter01: "SensorName"
+  parameter02: "SensorName"
+sensors:
+  - "SensorName"
