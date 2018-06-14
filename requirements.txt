@@ -7,13 +7,6 @@ pytest==3.0.3
 pytest-pep8==1.0.6
 urllib3==1.14
 xlrd==1.1.0
-pandas==0.22.0
-geopandas==0.3.0
-shapely==1.6.4
 python-dateutil
-rtree
-fiona
-numpy
-scipy
 git+https://opensource.ncsa.illinois.edu/bitbucket/scm/geod/pygeotemporal.git#egg=pygeotemporal
 git+https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/pyclowder2.git#egg=pyclowder2
