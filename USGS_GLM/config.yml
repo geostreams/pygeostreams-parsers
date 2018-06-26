@@ -1,0 +1,67 @@
+defaults:
+  start_date: '1908-01-01'
+  # old URL
+  # data_source_url: "https://nwis.waterservices.usgs.gov/nwis/iv/?"
+  data_source_url: "https://nwis.waterdata.usgs.gov/statename/nwis/dv?"
+  host: http://localhost:9000
+  # host: http://seagrant-dev.ncsa.illinois.edu/clowder
+  key: "r1ek3rs"
+  caching: false
+  sites_map:
+    # SU
+    - '04024000': 'mn'
+    - '04027000': 'wi'
+    - '04040000': 'mi'
+    # MI
+    - '04059500': 'mi'
+    - '04067500': 'mi'
+    - '040851385': 'wi'
+    - '04085427': 'wi'
+    - '04087170': 'wi'
+    - '04092750': 'in'
+    - '04101500': 'mi'
+    - '04108600': 'mi'
+    - '04119400': 'mi'
+    # HU
+    - '04142000': 'mi'
+    - '04157005': 'mi'
+    # ER
+    - '04165500': 'mi'
+    - '04166500': 'mi'
+    - '04176500': 'mi'
+    - '04193500': 'oh'
+    - '04199500': 'oh'
+    - '04200500': 'oh'
+    - '04208000': 'oh'
+    - '04213500': 'ny'
+    # ON
+    - '04231600': 'ny'
+    - '04249000': 'ny'
+
+  parameters_from_usgs:
+    - '00060_00003'
+    - '00010_00003'
+    - '00095_00003'
+    - '00300_00003'
+    - '00400_00008'
+    - '63680_00003'
+    - '00665_00003'
+
+map_parameters:
+     "00060_00003": "river-discharge"
+     "00060_00003_cd": "river-discharge-qc"
+     "00010_00003": "temperature-water"
+     "00010_00003_cd": "temperature-water-qc"
+     "00095_00003": "specific-cond-at-25C"
+     "00095_00003_cd": "specific-cond-at-25C-qc"
+     "00300_00003": "00300-dissolved-oxygen"
+     "00300_00003_cd": "00300-dissolved-oxygen-qc"
+     "00400_00008": "pH"
+     "00400_00008_cd": "pH-qc"
+     "63680_00003": "turbidity-neph"
+     "63680_00003_cd": "turbidity-neph-qc"
+     "00665_00003": "00665-phosphorus"
+     "00665_00003_cd": "00665-phosphorus-qc"
+
+
+
