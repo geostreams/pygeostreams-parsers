@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [IMLCZO-228](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-228)
 - Added Combination Script for get-concat-parse-upload
   [IMLCZO-233](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-233)
+- Added Combination Script for get-convert-concat-parse-upload
+  [IMLCZO-236](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-236)
 
-### Removed huc_finder and dependencies
+### Removed
+- Removed huc_finder and dependencies
   [GEOD-1105](https://opensource.ncsa.illinois.edu/jira/browse/GEOD-1105)

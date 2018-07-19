@@ -7,7 +7,7 @@
 
 # Imports #
 import os
-import re
+import string
 import argparse
 import yaml
 import datetime
@@ -161,11 +161,16 @@ def create_header(main_dir, new_files, data_dir, file_type, concat_file_name,
                                 if n == 0 and 'time' in temp[n].lower():
                                     combo_header_rows[n] = "Time"
                                 else:
+                                    no_special_chars = ''.join(
+                                        filter(lambda x: x in string.printable,
+                                               temp[n]))
                                     combo_header_rows[n] = (
                                             combo_header_rows[n] + ' ' +
-                                            re.sub(r'\W+', ' ',temp[n]))
+                                            no_special_chars.rstrip('\r\n'))
                         header_counter = 0
                         for csv_header_val in combo_header_rows:
+                            # Remove leading and following whitespace
+                            csv_header_val = csv_header_val.strip()
                             if header_counter < num_params-1:
                                 parse_file.write(csv_header_val + ',')
                             else:
@@ -281,6 +286,11 @@ def concat_files(debug, data_folder, header_data, main_dir,
                 else:
                     print("ERROR: INVALID DATA IN FILE")
                     break
+
+            # provide a line break between files if CSV
+            if file_type == '.csv':
+                output_file.write("\n")
+                parse_file.write("\n")
 
             # Ensure the files are closed properly regardless
             output_file.close()

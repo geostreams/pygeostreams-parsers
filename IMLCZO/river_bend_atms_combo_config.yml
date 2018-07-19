@@ -1,0 +1,70 @@
+inputs:
+  location: "http://localhost:9000"
+  key: "clowder_key"
+  user: "clowder_username"
+  password: "clowder_password"
+  file_path: "full-path/pygeotemporal_parsers/"
+  timestamp: "Measurement Time"
+  headers: 3
+  verify: "Port"
+  file_type: ".csv"
+  new_files: "parse/river_bend_atms/river_bend_atms_new_files.csv"
+  aggregate: "parse/river_bend_atms/river_bend_atms_aggregate_"
+  aggregate_file_type: ".csv"
+  parse: "parse/river_bend_atms/river_bend_atms_parse.csv"
+  downloads: "parse/river_bend_atms/river_bend_atms_files"
+config:
+  dataset_source_id: "DatasetID"
+  dataset_upload_id: "DatasetID"
+  sensor:
+      geometry:
+          type": Point
+          coordinates: [-88.433333, 40.180306, 0]
+      properties:
+          region: "Illinois"
+          type:
+              id: "imlczo"
+              title: "IMLCZO"
+              location: "river-bend"
+              network: ""
+          elevation:
+              mean_sea_level: 0
+              offset: 0
+              offset_units: "meters"
+          name: ""
+          popupContent: ""
+          huc: ""
+parameters:
+  Port 1 PYR W/m Solar: "RB PYR Pyranometer 150cm"
+  Port 2 ECRN-100 mm Precip: "RB ECRN-100 Rain Gauge 150cm"
+  Port 3 VP-4 RH: "RB Temp-RH-AtmP-VP 150cm"
+  Port 3 VP-4 C Temp: "RB Temp-RH-AtmP-VP 150cm"
+  Port 3 VP-4 atm kPa: "RB Temp-RH-AtmP-VP 150cm"
+  Port 4 LWS min Wet (450 thresh): "RB LWS Leaf Wetness Sensor 150cm"
+  Port 4 LWS Counts: "RB LWS Leaf Wetness Sensor 150cm"
+  Port 5 DS-2 m/s Wind: "RB DS-2 Anenometer 300cm"
+  Port 5 DS-2 m/s Gusts: "RB DS-2 Anenometer 300cm"
+  Port 5 DS-2 Direction: "RB DS-2 Anenometer 300cm"
+parameters_updated:
+  Port 1 PYR W/m Solar: "land_surface~1.5m__radiation~incoming~shortwave__energy_flux-W/m2"
+  Port 2 ECRN-100 mm Precip: "atmosphere_water__precipitation_leq-volume_flux_total-mm"
+  Port 3 VP-4 RH: "land_surface~1.5m-above_air__relative_humidity-%"
+  Port 3 VP-4 C Temp: "land_surface~1.5m-above_air__temperature-degC"
+  Port 3 VP-4 atm kPa: "land_surface~1.5m-above_air__barometric_pressure-kPa"
+  Port 4 LWS min Wet (450 thresh): "land_surface~1.5m-above_leaf_wetness-min"
+  Port 4 LWS Counts: "land_surface~1.5m-above_leaf_wetness-counts"
+  Port 5 DS-2 m/s Wind: "land_surface~3m-above_wind__speed-m/s"
+  Port 5 DS-2 m/s Gusts: "land_surface~3m-above_wind__direction_from_N-degree"
+  Port 5 DS-2 Direction: "land_surface~3m-above_wind__max_speed-m/s"
+sensors:
+  - "RB PYR Pyranometer 150cm"
+  - "RB ECRN-100 Rain Gauge 150cm"
+  - "RB Temp-RH-AtmP-VP 150cm"
+  - "RB LWS Leaf Wetness Sensor 150cm"
+  - "RB DS-2 Anenometer 300cm"
+sensorscreate:
+  - "RB PYR Pyranometer 150cm"
+  - "RB ECRN-100 Rain Gauge 150cm"
+  - "RB Temp-RH-AtmP-VP 150cm"
+  - "RB LWS Leaf Wetness Sensor 150cm"
+  - "RB DS-2 Anenometer 300cm"

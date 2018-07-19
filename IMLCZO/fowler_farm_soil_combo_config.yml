@@ -1,0 +1,80 @@
+inputs:
+  location: "http://localhost:9000"
+  key: "clowder_key"
+  user: "clowder_username"
+  password: "clowder_password"
+  file_path: "full-path/pygeotemporal_parsers/"
+  timestamp: "Measurement Time"
+  headers: 3
+  verify: "Port"
+  file_type: ".csv"
+  new_files: "parse/fowler_farm_soil/fowler_farm_soil_new_files.csv"
+  aggregate: "parse/fowler_farm_soil/fowler_farm_soil_aggregate_"
+  aggregate_file_type: ".csv"
+  parse: "parse/fowler_farm_soil/fowler_farm_soil_parse.csv"
+  downloads: "parse/fowler_farm_soil/fowler_farm_soil_files"
+config:
+  dataset_source_id: "DatasetID"
+  dataset_upload_id: "DatasetID"
+  sensor:
+      geometry:
+          type": Point
+          coordinates: [-88.331139, 40.150722, 0]
+      properties:
+          region: "Illinois"
+          type:
+              id: "imlczo"
+              title: "IMLCZO"
+              location: "fowler-farm"
+              network: ""
+          elevation:
+              mean_sea_level: 0
+              offset: 0
+              offset_units: "meters"
+          name: ""
+          popupContent: ""
+          huc: ""
+parameters:
+  Port 1 5TE m/m VWC: "FF 5TE Soil Probe 5cm"
+  Port 1 5TE mS/cm EC: "FF 5TE Soil Probe 5cm"
+  Port 1 5TE C Temp: "FF 5TE Soil Probe 5cm"
+  Port 2 5TE m/m VWC: "FF 5TE Soil Probe 10cm"
+  Port 2 5TE mS/cm EC: "FF 5TE Soil Probe 10cm"
+  Port 2 5TE C Temp: "FF 5TE Soil Probe 10cm"
+  Port 3 5TE m/m VWC: "FF 5TE Soil Probe 20cm"
+  Port 3 5TE mS/cm EC: "FF 5TE Soil Probe 20cm"
+  Port 3 5TE C Temp: "FF 5TE Soil Probe 20cm"
+  Port 4 5TE m/m VWC: "FF 5TE Soil Probe 50cm"
+  Port 4 5TE mS/cm EC: "FF 5TE Soil Probe 50cm"
+  Port 4 5TE C Temp: "FF 5TE Soil Probe 50cm"
+  Port 5 5TE m/m VWC: "FF 5TE Soil Probe 100cm"
+  Port 5 5TE mS/cm EC: "FF 5TE Soil Probe 100cm"
+  Port 5 5TE C Temp: "FF 5TE Soil Probe 100cm"
+parameters_updated:
+  Port 1 5TE m/m VWC: "land_surface~0.05m-depth_soil__bulk_volumetric_water_content-m3/m3"
+  Port 1 5TE mS/cm EC: "land_surface~0.05m-depth_soil__electrical_conductivity-mS/cm"
+  Port 1 5TE C Temp: "land_surface~0.05m-depth_soil__temperature-degC"
+  Port 2 5TE m/m VWC: "land_surface~0.1m-depth_soil__bulk_volumetric_water_content-m3/m3"
+  Port 2 5TE mS/cm EC: "land_surface~0.1m-depth_soil__electrical_conductivity-mS/cm"
+  Port 2 5TE C Temp: "land_surface~0.1m-depth_soil__temperature-degC"
+  Port 3 5TE m/m VWC: "land_surface~0.2m-depth_soil__bulk_volumetric_water_content-m3/m3"
+  Port 3 5TE mS/cm EC: "land_surface~0.2m-depth_soil__electrical_conductivity-mS/cm"
+  Port 3 5TE C Temp: "land_surface~0.2m-depth_soil__temperature-degC"
+  Port 4 5TE m/m VWC: "land_surface~0.5m-depth_soil__bulk_volumetric_water_content-m3/m3"
+  Port 4 5TE mS/cm EC: "land_surface~0.5m-depth_soil__electrical_conductivity-mS/cm"
+  Port 4 5TE C Temp: "land_surface~0.5m-depth_soil__temperature-degC"
+  Port 5 5TE m/m VWC: "land_surface~1m-depth_soil__bulk_volumetric_water_content-m3/m3"
+  Port 5 5TE mS/cm EC: "land_surface~1m-depth_soil__electrical_conductivity-mS/cm"
+  Port 5 5TE C Temp: "land_surface~1m-depth_soil__temperature-degC"
+sensors:
+  - "FF 5TE Soil Probe 5cm"
+  - "FF 5TE Soil Probe 10cm"
+  - "FF 5TE Soil Probe 20cm"
+  - "FF 5TE Soil Probe 50cm"
+  - "FF 5TE Soil Probe 100cm"
+sensorscreate:
+  - "FF 5TE Soil Probe 5cm"
+  - "FF 5TE Soil Probe 10cm"
+  - "FF 5TE Soil Probe 20cm"
+  - "FF 5TE Soil Probe 50cm"
+  - "FF 5TE Soil Probe 100cm"
