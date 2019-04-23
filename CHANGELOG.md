@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [IMLCZO-233](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-233)
 - Added Combination Script for get-convert-concat-parse-upload
   [IMLCZO-236](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-236)
+- Convert a provided JSON Data file to a CSV File
+  [IMLCZO-263](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-263)
 
 ### Removed
 - Removed huc_finder and dependencies

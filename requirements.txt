@@ -10,3 +10,4 @@ xlrd==1.1.0
 python-dateutil
 git+https://opensource.ncsa.illinois.edu/bitbucket/scm/geod/pygeotemporal.git#egg=pygeotemporal
 git+https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/pyclowder2.git#egg=pyclowder2
+pandas==0.22.0

@@ -13,6 +13,7 @@ This is a set of scripts for Pygeotemporal Parsers.
     * [About the `combo_multi_config.yml` YAML File](#combo_multi_yaml)
     * [About the `combo_multi_config_params.yml` YAML File](#combo_multi_params_yaml)
     * [About the `new_file_config.yml` YAML File](#new_file_yaml)
+    * [About the `multi_config_json_to_csv.yml` YAML File](#multi_config_json_to_csv)
 * [Running the Scripts](#run_scripts)
 
 <a name="general_info"></a>
@@ -32,11 +33,14 @@ Scripts with their Descriptions:
             * Used by `parse_new_datapoints.py`
     * Will not delete files
 * `convert_xls_to_csv.py`
-    * Creates a CSV Files from provided XLS Files
+    * Creates CSV Files from provided XLS Files
     * Will not delete files
 * `create_sensors_and_streams.py`
     * Create all defined Sensors and Streams if they do not exist
     * Does not create Datapoints
+* `convert_json_to_csv.py`
+    * Creates a CSV File from a provided JSON File
+    * Will not delete files
 * `delete_sensors_and_streams.py`
     * Delete all defined Sensors and Streams
     * Also deletes associated Datapoints
@@ -86,7 +90,6 @@ Scripts with their Descriptions:
     * Utilize new Parameter Names when parsing
     * Updates Sensor Statistics
 
-
 <a name="file_locations"></a>
 ### File Locations
 
@@ -95,11 +98,13 @@ Config Files:
 * `pygeotemporal_parsers/config/combo_multi_config.yml`
 * `pygeotemporal_parsers/config/combo_multi_config_params.yml`
 * `pygeotemporal_parsers/config/multi_config.yml`
+* `pygeotemporal_parsers/config/multi_config_json_to_csv.yml`
 * `pygeotemporal_parsers/config/new_file_config.yml`
 
 Parse Scripts:
 * All scripts are located in the `parse` folder
 * `pygeotemporal_parsers/parse/concat_files.py`
+* `pygeotemporal_parsers/parse/convert_json_to_csv.py`
 * `pygeotemporal_parsers/parse/convert_xls_to_csv.py`
 * `pygeotemporal_parsers/parse/get_concat_parse_upload.py`
 * `pygeotemporal_parsers/parse/get_convert_concat_parse_upload.py`
@@ -127,6 +132,7 @@ File to edit: `config/your_config.yml`
 * `combo_multi_config.yml` is provided as an example for `get_concat_parse_upload.py` and `get_concat_rename_parse_upload.py`
 * `combo_multi_config_params.yml` is provided as an example for `get_convert_concat_rename_parse_upload.py`
 * `new_file_config.yml` is provided as an example for `parse_and_upload_newest_file.py`
+* `multi_config_json_to_csv.yml` is provided as an example for `convert_json_to_csv.py`
 
 Note:
 * Ensure all the directory paths are correct
@@ -441,6 +447,33 @@ sensors:                                        # Sensors to Parse and Get or Cr
   - "SensorName"                                #   - "Sensor Name"
 ```
 
+<a name="multi_config_json_to_csv"></a>
+### About the `multi_config_json_to_csv.yml` YAML File
+
+This section will provide information about all the parts of this style of YAML File.
+
+These are the required YAML items for this script:
+
+* `convert_json_to_csv.py` ONLY uses these YAML items:
+    * `['inputs'][ all subitems ]`
+    * `['variables'][ all subitems ]`
+
+This is an example YAML file that can be utilized with variable descriptions:
+
+```
+inputs:                                         # General Inputs:
+  file_path: "full-dir-path-to-the-files"       #   Full file path to the Directory with the files
+  json_file: "convert/JSONDATA.json"            #   Path after file_path for the original JSON file
+  conv_file: "convert/NEWFILE.csv"              #   Path after file_path for the new CSV file
+  params_id: "parameter_column_name"            #   Name of Column containing the original parameters
+  conv_data: "converted_column_name"            #   Name of Column containing the converted parameters
+variables:                                      # Mapping of Variable Names during conversion:
+  old-name-01: "New Name 01"                    #   Original-Parameter-Name: "New Parameter Name"
+  old-name-02: "New Name 02"                    #   Original-Parameter-Name: "New Parameter Name"
+  old-name-03: "New Name 03"                    #   Original-Parameter-Name: "New Parameter Name"
+  old-name-04: "New Name 04"                    #   Original-Parameter-Name: "New Parameter Name"
+```
+
 <a name="run_scripts"></a>
 ## Running the Scripts
 
@@ -455,3 +488,4 @@ All scripts are run using the Command Line with one argument:
 * `get_convert_concat_parse_upload.py -c full-path-including/combo_multi_config.yml`
 * `get_convert_concat_rename_parse_upload.py -c full-path-including/combo_multi_config_params.yml`
 * `parse_and_upload_newest_file.py -c full-path-including/new_file_config.yml`
+* `convert_json_to_csv.py -c full-path-including/multi_config_json_to_csv.yml`

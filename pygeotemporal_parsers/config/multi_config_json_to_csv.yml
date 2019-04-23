@@ -1,0 +1,11 @@
+inputs:
+  file_path: "full-path/pygeotemporal_parsers/"
+  json_file: "path/from/file_path/to/JSONDATA.json"
+  conv_file: "path/from/file_path/to/NEWFILE.csv"
+  params_id: "parameter_column_name"
+  conv_data: "converted_column_name"
+variables:
+  old-name-01: "New Name 01"
+  old-name-02: "New Name 02"
+  old-name-03: "New Name 03"
+  old-name-04: "New Name 04"
