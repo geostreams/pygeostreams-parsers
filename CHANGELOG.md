@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [IMLCZO-236](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-236)
 - Convert a provided JSON Data file to a CSV File
   [IMLCZO-263](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-263)
+- Add Scripts for Hourly Parsing of Datapoints
+  [IMLCZO-267](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-267)
 
 ### Removed
 - Removed huc_finder and dependencies

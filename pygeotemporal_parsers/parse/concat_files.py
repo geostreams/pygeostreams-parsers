@@ -244,7 +244,7 @@ def concat_files(debug, data_folder, header_data, main_dir,
     else:
         max_num_files = datafiles.__len__()
 
-    print ("INFO: Number of Files to concatenate  in this directory = "
+    print ("INFO: Number of Files to concatenate in this directory = "
            + str(max_num_files))
     print ""
 

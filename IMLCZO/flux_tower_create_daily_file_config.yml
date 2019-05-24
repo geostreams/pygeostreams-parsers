@@ -1,0 +1,9 @@
+inputs:
+  location: "http://localhost:9000"
+  key: "clowder_key"
+  file_path: "full-path/pygeotemporal_parsers/"
+  aggregate: "parse/flux_tower/aggregate"
+  aggregate_header: "parse/flux_tower/aggrHeader"
+  aggregate_file_type: ".csv"
+  aggregate_path: "parse/flux_tower/aggregates/"
+  dataset_upload_id: "DatasetID"

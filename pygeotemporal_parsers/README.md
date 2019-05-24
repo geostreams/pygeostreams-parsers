@@ -14,6 +14,9 @@ This is a set of scripts for Pygeotemporal Parsers.
     * [About the `combo_multi_config_params.yml` YAML File](#combo_multi_params_yaml)
     * [About the `new_file_config.yml` YAML File](#new_file_yaml)
     * [About the `multi_config_json_to_csv.yml` YAML File](#multi_config_json_to_csv)
+    * [About the `create_daily_file_config.yml` YAML File](#create_daily_file_yaml)
+    * [About the `hourly_parse_config.yml` YAML File](#hourly_parse_yaml)
+
 * [Running the Scripts](#run_scripts)
 
 <a name="general_info"></a>
@@ -32,24 +35,23 @@ Scripts with their Descriptions:
             * Will erase contents first
             * Used by `parse_new_datapoints.py`
     * Will not delete files
-* `convert_xls_to_csv.py`
-    * Creates CSV Files from provided XLS Files
-    * Will not delete files
-* `create_sensors_and_streams.py`
-    * Create all defined Sensors and Streams if they do not exist
-    * Does not create Datapoints
 * `convert_json_to_csv.py`
     * Creates a CSV File from a provided JSON File
     * Will not delete files
+* `convert_xls_to_csv.py`
+    * Creates CSV Files from provided XLS Files
+    * Will not delete files
+* `create_new_daily_file.py`
+    * Create a new Daily File with aggregated Year-to-Date data
+    * Upload Yesterday's Daily File to the correct Clowder Dataset location
+    * Move Yesterday's Daily File to the correct local folder
+    * It is intended for this script to be utilized once per day
+* `create_sensors_and_streams.py`
+    * Create all defined Sensors and Streams if they do not exist
+    * Does not create Datapoints
 * `delete_sensors_and_streams.py`
     * Delete all defined Sensors and Streams
     * Also deletes associated Datapoints
-* `get_new_files.py`
-    * Get all files from Clowder not currently in the downloads directory
-    * Will not duplicate files
-    * Creates a file with a list of newly downloaded file names
-        * Used by `concat-files.py`
-        * Will erase the contents of an existing file with this list
 * `get_concat_parse_upload.py`
     * Get the Newest Files for parsing
     * Concat the new files and create a parsing file via `concat-files.py`
@@ -73,6 +75,12 @@ Scripts with their Descriptions:
     * Parse the new Data with New Parameter Names via `parse_new_datapoints_new_params.py`
     * Update the Sensors Stats via `parse_new_datapoints_new_params.py`
     * Upload newest Aggregate to the correct location via `parse_and_upload_newest_file.py`
+* `get_new_files.py`
+    * Get all files from Clowder not currently in the downloads directory
+    * Will not duplicate files
+    * Creates a file with a list of newly downloaded file names
+        * Used by `concat-files.py`
+        * Will erase the contents of an existing file with this list
 * `parse_and_upload_newest_file.py`
     * Get the Newest File for parsing and upload
     * Get or Create Sensors and Streams via `create_sensors_and_streams.py`
@@ -89,6 +97,14 @@ Scripts with their Descriptions:
     * Parse all new data from the parsing file
     * Utilize new Parameter Names when parsing
     * Updates Sensor Statistics
+* `parse_new_hourly_datapoints.py`
+    * Get the files for parsing
+    * Concat the new files and create a parsing file via `concat_files.py`
+    * Add the Aggregated data to the Existing Daily File
+    * Get or Create Sensors and Streams via `create_sensors_and_streams.py`
+    * Parse the new Data via `parse_new_datapoints.py`
+    * Update the Sensors Stats via `parse_new_datapoints.py`
+    * It is intended for this script to be utilized once per hour each day
 
 <a name="file_locations"></a>
 ### File Locations
@@ -97,6 +113,8 @@ Config Files:
 * All files are located in the `config` folder
 * `pygeotemporal_parsers/config/combo_multi_config.yml`
 * `pygeotemporal_parsers/config/combo_multi_config_params.yml`
+* `pygeotemporal_parsers/config/create_daily_file_config.yml`
+* `pygeotemporal_parsers/config/hourly_parse_config.yml`
 * `pygeotemporal_parsers/config/multi_config.yml`
 * `pygeotemporal_parsers/config/multi_config_json_to_csv.yml`
 * `pygeotemporal_parsers/config/new_file_config.yml`
@@ -106,6 +124,7 @@ Parse Scripts:
 * `pygeotemporal_parsers/parse/concat_files.py`
 * `pygeotemporal_parsers/parse/convert_json_to_csv.py`
 * `pygeotemporal_parsers/parse/convert_xls_to_csv.py`
+* `pygeotemporal_parsers/parse/create_new_daily_file.py`
 * `pygeotemporal_parsers/parse/get_concat_parse_upload.py`
 * `pygeotemporal_parsers/parse/get_convert_concat_parse_upload.py`
 * `pygeotemporal_parsers/parse/get_convert_concat_rename_parse_upload.py`
@@ -113,6 +132,7 @@ Parse Scripts:
 * `pygeotemporal_parsers/parse/parse_and_upload_newest_file.py`
 * `pygeotemporal_parsers/parse/parse_new_datapoints.py`
 * `pygeotemporal_parsers/parse/parse_new_datapoints_new_params.py`
+* `pygeotemporal_parsers/parse/parse_new_hourly_datapoints.py`
 
 Sensors Scripts:
 * All scripts are located in the `sensors` folder
@@ -123,16 +143,18 @@ Sensors Scripts:
 ## Setting Up for Usage
 
 File to edit: `config/your_config.yml`
+* `combo_multi_config.yml` is provided as an example for `get_concat_parse_upload.py` and `get_concat_rename_parse_upload.py`
+* `combo_multi_config_params.yml` is provided as an example for `get_convert_concat_rename_parse_upload.py`
+* `create_daily_file_config.yml` is provided as an example for `create_new_daily_file.py`
+* `hourly_parse_config.yml` is provided as an example for `parse_new_hourly_datapoints.py`
 * `multi_config.yml` is provided as an example for these scripts:
     * `create_sensors_and_streams.py`
     * `delete_sensors_and_streams.py`
     * `get_new_files.py`
     * `concat-files.py`
     * `parse_new_datapoints.py`
-* `combo_multi_config.yml` is provided as an example for `get_concat_parse_upload.py` and `get_concat_rename_parse_upload.py`
-* `combo_multi_config_params.yml` is provided as an example for `get_convert_concat_rename_parse_upload.py`
-* `new_file_config.yml` is provided as an example for `parse_and_upload_newest_file.py`
 * `multi_config_json_to_csv.yml` is provided as an example for `convert_json_to_csv.py`
+* `new_file_config.yml` is provided as an example for `parse_and_upload_newest_file.py`
 
 Note:
 * Ensure all the directory paths are correct
@@ -474,18 +496,110 @@ variables:                                      # Mapping of Variable Names duri
   old-name-04: "New Name 04"                    #   Original-Parameter-Name: "New Parameter Name"
 ```
 
+<a name="create_daily_file_yaml"></a>
+### About the `create_daily_file_config.yml` YAML File
+
+This section will provide information about all the parts of this style of YAML File.
+
+These are the required YAML items for this script:
+
+* `parse_and_upload_newest_file.py` ONLY uses these YAML items:
+    * `['inputs'][ all subitems ]`
+
+This is an example YAML file that can be utilized with variable descriptions:
+
+```
+inputs:                                         # General Inputs:
+  location: "http://localhost:9000"             #   Clowder URL
+  key: "clowder_key"                            #   Clowder Key
+  file_path: "full-dir-path-to-new-files"       #   Full file path to the Directory with the new file
+  aggregate: "parse/aggregate"                  #   Path after file_path for aggregate of newly downloaded RDF data
+  aggregate_file_type: ".csv"                   #   Aggregate file type (.csv, .dat, etc.)
+                                                #       Note: File == aggregate + datetime + aggregate_file_type
+  aggregate_header: "parse/aggrHeader"          #   For the name of the Aggregate File Header
+                                                #       (used for starting an Annual File,
+                                                #        and assumes the same file type in aggregate_file_type)
+  aggregate_path: "parse/aggregates/"           #   Path after file_path for the old Aggregates
+  dataset_upload_id: "DatasetID"                #   String ID for the Dataset on Clowder for the new Aggregate upload
+```
+
+<a name="hourly_parse_yaml"></a>
+### About the `hourly_parse_config.yml` YAML File
+
+This section will provide information about all the parts of this style of YAML File.
+
+These are the required YAML items for this script:
+
+* `parse_and_upload_newest_file.py` ONLY uses these YAML items:
+    * `['inputs'][ all subitems ]`
+    * `['config'][ all subitems ]`
+    * `['parameters']`
+    * `['sensors']`
+
+This is an example YAML file that can be utilized with variable descriptions:
+
+```
+inputs:                                         # General Inputs:
+  location: "http://localhost:9000"             #   Clowder URL
+  key: "clowder_key"                            #   Clowder Key
+  file_path: "full-dir-path-to-new-files"       #   Full file path to the Directory with the new file
+  timestamp: "start_time"                       #   Keyword for the Time Column in to-be-parsed file
+  headers: 4                                    #   Number of Header Rows in the Raw Data Files
+  verify: "unique"                              #   Unique item in the Header shared for all associated RDF
+  file_type: ".dat"                             #   File type to be parsed (.dat or .csv)
+  file_key: "Hourly_Data_Files_Start_With_This" #   String with which all to-be-aggregated files start
+  new_files: "parse/new_files.csv"              #   Path after file_path for list of newly downloaded RDF
+  aggregate: "parse/aggregate"                  #   Path after file_path for aggregate of newly downloaded RDF data
+  aggregate_file_type: ".csv"                   #   Aggregate file type (.csv, .dat, etc.)
+                                                #       Note: File == aggregate + datetime + aggregate_file_type
+  parse: "parse/parse.csv"                      #   Path after file_path for the to-be-parsed file
+  downloads: "parse/download_files"             #   Path for the location of the downloaded RDF
+  hourly_files: "parse/HourlyFiles"             #   Path for the location of the hourly files after aggregation
+config:                                         # General Config Items:
+  sensor:                                       #   Sensor Information:
+      geometry:                                 #       Sensor Geometry
+          type: Point                           #           Type of Geometry
+          coordinates: [-88.00, 40.00, 0]       #           Coordinates
+      properties:                               #       Properties
+          region: "Region"                      #           Region
+          type:                                 #           Type - Information
+              id: "type_id"                     #           Type - ID
+              title: "type_title"               #           Type - Title
+              location: "location_name"         #           Type - Location Name
+              network: ""                       #           Type - Network
+          elevation:                            #           Elevation Information
+              mean_sea_level: 0                 #           Elevation - Mean Sea Level
+              offset: 0                         #           Elevation - Any Offset
+              offset_units: "meters"            #           Elevation - Offset Units
+          name: ""                              #           Sensor Name
+          popupContent: ""                      #           Sensor Popup Content
+          huc: ""                               #           Sensor HUC Number
+parameters:                                     # Parameters to Parse (Any Number):
+  abc: "Instrument Name 01"                     #   Column_Name: "Sensor Name"
+  def: "Instrument Name 02"                     #   Column_Name: "Sensor Name"
+sensors:                                        # Sensors to Parse for the RDF (Any Number):
+  - "Instrument Name 01"                        #   - "Sensor Name"
+  - "Instrument Name 02"                        #   - "Sensor Name"
+sensorscreate:                                  # Sensor Names to Create with Config Sensor Information (Any Number):
+  - "Instrument Name 01"                        #   - "Sensor Name"
+  - "Instrument Name 02"                        #   - "Sensor Name"
+```
+
 <a name="run_scripts"></a>
 ## Running the Scripts
 
 All scripts are run using the Command Line with one argument:
+* `concat-files.py -c full-path-including/multi_config.yml`
+* `convert_json_to_csv.py -c full-path-including/multi_config_json_to_csv.yml`
+* `create_new_daily_file.py -c full-path-including/create_daily_file_config.yml`
 * `create_sensors_and_streams.py -c full-path-including/multi_config.yml`
 * `delete_sensors_and_streams.py -c full-path-including/multi_config.yml`
-* `get_new_files.py -c full-path-including/multi_config.yml`
-* `concat-files.py -c full-path-including/multi_config.yml`
-* `parse_new_datapoints.py -c full-path-including/multi_config.yml`
-* `parse_new_datapoints_new_params.py -c full-path-including/combo_multi_config_params.yml`
 * `get_concat_parse_upload.py -c full-path-including/combo_multi_config.yml`
 * `get_convert_concat_parse_upload.py -c full-path-including/combo_multi_config.yml`
 * `get_convert_concat_rename_parse_upload.py -c full-path-including/combo_multi_config_params.yml`
+* `get_new_files.py -c full-path-including/multi_config.yml`
 * `parse_and_upload_newest_file.py -c full-path-including/new_file_config.yml`
-* `convert_json_to_csv.py -c full-path-including/multi_config_json_to_csv.yml`
+* `parse_new_datapoints.py -c full-path-including/multi_config.yml`
+* `parse_new_datapoints_new_params.py -c full-path-including/combo_multi_config_params.yml`
+* `parse_new_hourly_datapoints.py -c full-path-including/hourly_parse_config.yml`
+
