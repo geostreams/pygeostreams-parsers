@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## Unreleased
+
+### Fixed
+- Add missing variable import in `create_header` function in `contact_files.py`
+  [IMLCZO-272](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-267)
+
+## [1.0.0] - 2019-05-24
 
 ### Added
 - Great Lakes Environmental Database(Glenda) parser

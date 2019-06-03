@@ -101,9 +101,11 @@ def main():
 
 
 def create_header(main_dir, new_files, data_dir, file_type, concat_file_name,
-                  parse_file_name, verify_header, total_header_rows):
+                  parse_file_name, verify_header, total_header_rows,
+                  timestamp='TIMESTAMP'):
     """
         Create the header
+        NOTE: 'timestamp' has a default value
     """
 
     new_files = open(os.path.join(main_dir, new_files), 'rb')
@@ -193,7 +195,7 @@ def create_header(main_dir, new_files, data_dir, file_type, concat_file_name,
                     # There should only be this many header rows
                     if y < total_header_rows:
                         header_rows.append(str(row))
-                        if 'time' in str(row):
+                        if timestamp in str(row):
                             parse_file.write(str(row))
                         y += 1
                         output_file.write(str(row))

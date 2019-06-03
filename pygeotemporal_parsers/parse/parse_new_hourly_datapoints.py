@@ -141,7 +141,7 @@ def main():
             header_status = \
                 create_header(local_path, new_files, downloads, file_type,
                               concat_file_name, parse_file_name,
-                              verify_header, total_header_rows)
+                              verify_header, total_header_rows, timestamp)
 
             print "INFO: Header is = "
             for row in header_status:
