@@ -40,10 +40,20 @@ def main():
                     help="Path to the Multiple Config File",
                     default=r'/multi_config.yml',
                     required=True)
+    ap.add_argument('-p', "--printout",
+                    help="Print Non-Error Messages to the Screen",
+                    default=r'False',
+                    required=False)
     opts = ap.parse_args()
     if not opts.config:
         ap.print_usage()
         quit()
+
+    # If printout is True, Non-Error messages will print to the screen
+    if opts.printout:
+        printout = eval(opts.printout)
+    else:
+        printout = False
 
     # Config File
     multi_config = yaml.load(open(opts.config, 'r'))
@@ -119,9 +129,11 @@ def main():
         if verify_files in source_file:
             output_file.write(source_file + '\n')
             num_new_files += 1
-    print "num_new_files here is = " + str(num_new_files)
+    if printout is True:
+        print "num_new_files here is = " + str(num_new_files)
     if num_new_files < 1:
-        print "No new files to concat - exiting"
+        if printout is True:
+            print "No new files to concat - exiting"
         return
 
     # Ensure the files are closed properly regardless
@@ -131,8 +143,9 @@ def main():
 
     # CONCAT FILES start #
 
-    print "INFO: file to write is: " + str(concat_file_name)
-    print " "
+    if printout is True:
+        print "INFO: file to write is: " + str(concat_file_name)
+        print " "
 
     if os.path.isdir(downloads):
 
@@ -140,32 +153,36 @@ def main():
         if header_status is False:
             header_status = \
                 create_header(local_path, new_files, downloads, file_type,
-                              concat_file_name, parse_file_name,
-                              verify_header, total_header_rows, timestamp)
+                              concat_file_name, parse_file_name, verify_header,
+                              total_header_rows, timestamp, printout)
 
-            print "INFO: Header is = "
-            for row in header_status:
-                print row[:-1]
-            print " "
+            if printout is True:
+                print "INFO: Header is = "
+                for row in header_status:
+                    print row[:-1]
+                print " "
 
         # Now to add the non-header data to the file and the daily file
         if header_status is not False:
-            print "INFO: Concatenating the data"
+            if printout is True:
+                print "INFO: Concatenating the data"
             # Update Parsing File and Append to Daily File
             concat_files(debug, downloads, header_status, local_path,
-                         new_files, file_type, daily_file,
-                         parse_file_name, total_header_rows)
+                         new_files, file_type, daily_file, parse_file_name,
+                         total_header_rows, printout)
 
         # Next is to move the single files to their storage location
         if header_status is not False:
-            move_hourly_files(downloads, local_path, new_files, hourly_files)
+            move_hourly_files(downloads, local_path, new_files,
+                              hourly_files, printout)
 
     else:
         print "ERROR: VALID downloads NOT SUPPLIED"
         print " "
 
-    print ""
-    print "DONE with Concatenation"
+    if printout is True:
+        print ""
+        print "DONE with Concatenation"
 
     # CONCAT FILES end #
 
@@ -183,18 +200,21 @@ def main():
     if os.path.exists(parse_file_name):
         datafile = open(parse_file_name, 'rb')
     else:
-        print "Missing File to Parse. "
+        if printout is True:
+            print "Missing File to Parse. "
         return
 
     # Parse Data
-    print("Will parse data. ")
+    if printout is True:
+            print("Will parse data. ")
     parse_file = open(parse_file_name, 'r')
     parse_data(timestamp, config, sensor_names, parameters, parse_file,
                sensor_client, stream_client, datapoint_client)
 
     # Update the sensors
-    print("Will update sensor stats. ")
-    update_sensors_stats(sensor_client, sensor_names)
+    if printout is True:
+        print("Will update sensor stats. ")
+    update_sensors_stats(sensor_client, sensor_names, printout)
 
     # Ensure the files are closed properly regardless
     parse_file.close()
@@ -203,32 +223,38 @@ def main():
     # Delete Extraneous File from daily parsing
     os.remove(concat_file_name)
 
-    print("Parsing Process Complete. ")
+    if printout is True:
+        print("Parsing Process Complete. ")
 
     # PARSE FILES end #
 
-    print("Processing Complete. ")
+    if printout is True:
+        print("Processing Complete. ")
 
 
-def move_hourly_files(data_folder, main_dir, new_files, hourly_files):
+def move_hourly_files(data_folder, main_dir, new_files,
+                      hourly_files, printout=False):
     """
         Move previously concatenated hourly files to a separate directory
     """
 
     # Current data directory with the files to move
     data_directory = os.path.join(main_dir, data_folder)
-    print "INFO: Directory with new files: " + str(data_directory)
+    if printout is True:
+        print "INFO: Directory with new files: " + str(data_directory)
 
     # Current directory for the new files
     hourly_files_dir = os.path.join(main_dir, hourly_files)
-    print "INFO: Directory for the new files: " + str(hourly_files_dir)
+    if printout is True:
+        print "INFO: Directory for the new files: " + str(hourly_files_dir)
 
     new_files = open(os.path.join(main_dir, new_files), 'rb')
     new_file_list = new_files.read()
     new_files.close()
 
-    print "Files to Move"
-    print new_file_list
+    if printout is True:
+        print "Files to Move"
+        print new_file_list
 
     # locate the data files
     datafiles = [datafile for datafile in os.listdir(data_directory) if
@@ -237,13 +263,15 @@ def move_hourly_files(data_folder, main_dir, new_files, hourly_files):
 
     # step through one file at a time
     for datafile in datafiles:
-        print ("Moving " + datafile + " to " + hourly_files_dir)
+        if printout is True:
+            print ("Moving " + datafile + " to " + hourly_files_dir)
         shutil.move(os.path.join(data_directory, datafile),
                     os.path.join(hourly_files_dir, datafile)
                     )
 
-    print("Moving Hourly Files Complete. ")
-    print(" ")
+    if printout is True:
+        print("Moving Hourly Files Complete. ")
+        print(" ")
 
 
 if __name__ == '__main__':

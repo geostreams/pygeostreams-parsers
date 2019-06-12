@@ -24,10 +24,20 @@ def main():
                     help="Path to the Multiple Config File",
                     default=r'/multi_config.yml',
                     required=True)
+    ap.add_argument('-p', "--printout",
+                    help="Print Non-Error Messages to the Screen",
+                    default=r'False',
+                    required=False)
     opts = ap.parse_args()
     if not opts.config:
         ap.print_usage()
         quit()
+
+    # If printout is True, Non-Error messages will print to the screen
+    if opts.printout:
+        printout = eval(opts.printout)
+    else:
+        printout = False
 
     multi_config = yaml.load(open(opts.config, 'r'))
 
@@ -57,17 +67,18 @@ def main():
 
     # Parse Data
     parse_data(timestamp, config, sensor_names, parameters, datafile,
-               sensor_client, stream_client, datapoint_client)
+               sensor_client, stream_client, datapoint_client, printout)
 
     # Update the sensors
-    print("Will update sensor stats. ")
-    update_sensors_stats(sensor_client, sensor_names)
+    if printout is True:
+        print("Will update sensor stats. ")
+    update_sensors_stats(sensor_client, sensor_names, printout)
 
     # Ensure the file is closed properly regardless
     datafile.close()
 
 
-def update_sensors_stats(sensor_client, sensor_names):
+def update_sensors_stats(sensor_client, sensor_names, printout=False):
     """Update all sensors stats after uploads"""
 
     for sensor_name in sensor_names:
@@ -79,16 +90,18 @@ def update_sensors_stats(sensor_client, sensor_names):
         if len(sensor) == 1:
             sensor = sensor[0]
             sensor_id = str(sensor['id'])
-            print("Sensor found. Updating " + sensor_id)
+            if printout is True:
+                print("Sensor found. Updating " + sensor_id)
             sensor_client.sensor_statistics_post(sensor_id)
         else:
             print("Sensor not found " + sensor_name)
 
-    print("Sensor stats updated.")
+    if printout is True:
+        print("Sensor stats updated.")
 
 
 def parse_data(timestamp, config, sensor_names, parameters, datafile,
-               sensor_client, stream_client, datapoint_client):
+               sensor_client, stream_client, datapoint_client, printout=False):
     """Parse all the Data"""
 
     # Use CSV Dict Reader to interpret the CSV datafile
@@ -104,14 +117,16 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
     latitude = config['sensor']['geometry']['coordinates'][1]
     elevation = config['sensor']['geometry']['coordinates'][2]
 
-    print "Parsing Datafile: " + str(datafile.name)
-    print "Number of Rows to Parse = " + str(len(all_data))
+    if printout is True:
+        print "Parsing Datafile: " + str(datafile.name)
+        print "Number of Rows to Parse = " + str(len(all_data))
 
     for sensor_name in sensor_names:
 
         if '&' in sensor_name:
             sensor_name = str(sensor_name.replace('&', '%26'))
-        print 'sensor_name is ' + sensor_name
+        if printout is True:
+            print 'sensor_name is ' + sensor_name
 
         # Get Sensor information for the Sensor Name
         sensor_raw = sensor_client.sensor_get_by_name(sensor_name)
@@ -149,7 +164,8 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
                     if data_value != '':
                         properties[x] = data_value
                     else:
-                        print "Data Field is blank - Not Parsing"
+                        if printout is True:
+                            print "Data Field is blank - Not Parsing"
             # Create Datapoint
             datapoint = {
                 'start_time': start_time,
@@ -172,13 +188,15 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
             # Post Datapoint
             datapoint_post = datapoint_client.datapoint_post(datapoint)
 
-            print("Created Datapoint %s for Sensor %s Stream %s for %s"
-                  % (str(datapoint_post.json()['id']), str(sensor_id),
-                     str(stream_id), str(sensor_date)))
+            if printout is True:
+                print("Created Datapoint %s for Sensor %s Stream %s for %s"
+                      % (str(datapoint_post.json()['id']), str(sensor_id),
+                         str(stream_id), str(sensor_date)))
 
     # End of Loop
 
-    print("Parsing Done")
+    if printout is True:
+        print("Parsing Done")
 
     return
 

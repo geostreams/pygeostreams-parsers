@@ -24,11 +24,31 @@ def main():
                     help="Path to the Multiple Config File",
                     default=r'/multi_config.yml',
                     required=True)
+    ap.add_argument('-d', "--debug",
+                    help="Enter DEBUG mode",
+                    default=r'False',
+                    required=False)
+    ap.add_argument('-p', "--printout",
+                    help="Print Non-Error Messages to the Screen",
+                    default=r'False',
+                    required=False)
     opts = ap.parse_args()
     if not opts.config:
         ap.print_usage()
         quit()
-    
+
+    # If debug is True, only the first file in each directory will be processed
+    if opts.debug:
+        debug = opts.debug
+    else:
+        debug = False
+
+    # If printout is True, Non-Error messages will print to the screen
+    if opts.printout:
+        printout = eval(opts.printout)
+    else:
+        printout = False
+
     multi_config = yaml.load(open(opts.config, 'r'))
     
     # Main Directory
@@ -58,19 +78,17 @@ def main():
     
     # Header Verification Text
     verify_header =  multi_config['inputs']['verify']
-    
-    # If debug is True, only the first file in each directory will be processed
-    debug = False
-    
+
     header_status = False
     
     if not os.path.isfile(os.path.join(main_dir, new_files)):
         print "ERROR: VALID new_files NOT SUPPLIED - EXITING"
         quit()
-    
-    print "INFO: file to write is: " + str(concat_file_name)
-    print " "
-    
+
+    if printout is True:
+        print "INFO: file to write is: " + str(concat_file_name)
+        print " "
+
     if os.path.isdir(data_dir):
     
         # Create the header if it does not exist
@@ -78,31 +96,34 @@ def main():
             header_status = \
                 create_header(main_dir, new_files, data_dir, file_type,
                               concat_file_name, parse_file_name,
-                              verify_header, total_header_rows)
-    
-            print "INFO: Header is = "
-            for row in header_status:
-                print row[:-1]
-            print " "
+                              verify_header, total_header_rows, printout)
+
+            if printout is True:
+                print "INFO: Header is = "
+                for row in header_status:
+                    print row[:-1]
+                print " "
     
         # Now to add the non-header data to the file
         if header_status is not False:
-            print "INFO: Concatenating the data"
+            if printout is True:
+                print "INFO: Concatenating the data"
             concat_files(debug, data_dir, header_status, main_dir,
                          new_files, file_type, concat_file_name,
-                         parse_file_name, total_header_rows)
+                         parse_file_name, total_header_rows, printout)
     
     else:
         print "ERROR: VALID data_dir NOT SUPPLIED"
         print " "
-    
-    print ""
-    print "DONE with Concatenation"
+
+    if printout is True:
+        print ""
+        print "DONE with Concatenation"
 
 
 def create_header(main_dir, new_files, data_dir, file_type, concat_file_name,
                   parse_file_name, verify_header, total_header_rows,
-                  timestamp='TIMESTAMP'):
+                  timestamp='TIMESTAMP', printout=False):
     """
         Create the header
         NOTE: 'timestamp' has a default value
@@ -141,7 +162,8 @@ def create_header(main_dir, new_files, data_dir, file_type, concat_file_name,
                 for row in csv_reader:
                     # check if the header exists
                     if not header_rows or combo_header_rows:
-                        print "INFO: Header row does not exist - Creating"
+                        if printout is True:
+                            print "INFO: Header row does not exist - Creating"
                         if verify_header not in row:
                             print("ERROR: INVALID HEADER IN FILE")
                             return
@@ -186,7 +208,8 @@ def create_header(main_dir, new_files, data_dir, file_type, concat_file_name,
                 for row in csv_reader:
                     # check if the header exists
                     if not header_rows:
-                        print "INFO: Header row does not exist - Creating"
+                        if printout is True:
+                            print "INFO: Header row does not exist - Creating"
                         if verify_header not in row:
                             print("ERROR: INVALID HEADER IN FILE")
                             return
@@ -207,14 +230,15 @@ def create_header(main_dir, new_files, data_dir, file_type, concat_file_name,
             parse_file.close()
             csv_reader.close()
 
-            print "INFO: CONCAT File should have header from " + str(filename)
+            if printout is True:
+                print "INFO: CONCAT File should have header from " + str(filename)
 
     return header_rows
 
 
 def concat_files(debug, data_folder, header_data, main_dir,
                  new_files, file_type, concat_file_name,
-                 parse_file_name, total_header_rows):
+                 parse_file_name, total_header_rows, printout=False):
     """
         Concatenate the data in the files
         while not duplicating the headers
@@ -227,14 +251,16 @@ def concat_files(debug, data_folder, header_data, main_dir,
     # Current data directory for the Concatenation
     data_directory = os.path.join(main_dir, data_folder)
 
-    print "INFO: Directory for concatenation: " + str(data_directory)
+    if printout is True:
+        print "INFO: Directory for concatenation: " + str(data_directory)
 
     new_files = open(os.path.join(main_dir, new_files), 'rb')
     new_file_list = new_files.read()
     new_files.close()
 
-    print "Files to Concatenate"
-    print new_file_list
+    if printout is True:
+        print "Files to Concatenate"
+        print new_file_list
 
     # locate the data files
     datafiles = [datafile for datafile in os.listdir(data_directory) if
@@ -246,9 +272,10 @@ def concat_files(debug, data_folder, header_data, main_dir,
     else:
         max_num_files = datafiles.__len__()
 
-    print ("INFO: Number of Files to concatenate in this directory = "
-           + str(max_num_files))
-    print ""
+    if printout is True:
+        print ("INFO: Number of Files to concatenate in this directory = "
+               + str(max_num_files))
+        print ""
 
     # step through one file at a time
     x = 0
@@ -298,7 +325,8 @@ def concat_files(debug, data_folder, header_data, main_dir,
             output_file.close()
             csv_reader.close()
             parse_file.close()
-            print "INFO: CONCAT File should have data for " + str(filename)
+            if printout is True:
+                print "INFO: CONCAT File should have data for " + str(filename)
 
 
 if __name__ == "__main__":

@@ -28,10 +28,20 @@ def main():
                     help="Path to the Multiple Config File",
                     default=r'/multi_config.yml',
                     required=True)
+    ap.add_argument('-p', "--printout",
+                    help="Print Non-Error Messages to the Screen",
+                    default=r'False',
+                    required=False)
     opts = ap.parse_args()
     if not opts.config:
         ap.print_usage()
         quit()
+
+    # If printout is True, Non-Error messages will print to the screen
+    if opts.printout:
+        printout = eval(opts.printout)
+    else:
+        printout = False
 
     # Config File
     multi_config = yaml.load(open(opts.config, 'r'))
@@ -69,14 +79,17 @@ def main():
     # Check File Statuses
     previous_exists = os.path.isfile(previous_file_name)
     current_exists = os.path.isfile(concat_file_name)
+
     if not current_exists:
         if previous_exists and (
                 current_datetime.year == previous_datetime.year):
-            print ('Yesterday File exists. '
-                   'Will create update Annual File. ')
+            if printout is True:
+                print ('Yesterday File exists. '
+                       'Will create update Annual File. ')
             shutil.copy(previous_file_name, concat_file_name)
 
-            print('Uploading File to Clowder. ')
+            if printout is True:
+                print('Uploading File to Clowder. ')
             r = requests.Session()
             response = r.post("%s/api/uploadToDataset/%s?key=%s" %
                               (location, dataset_id, key),
@@ -87,16 +100,19 @@ def main():
                       (response.status_code, response.text))
                 return None
 
-            print ('Moving previous Annual File. ')
+            if printout is True:
+                print ('Moving previous Annual File. ')
             shutil.move(previous_file_name, aggregate_path_name)
         else:
             print ('Yesterday File does not exist for this Year. '
                    'Creating empty Annual file with Header Only. ')
             shutil.copy(header_file_name, concat_file_name)
     else:
-        print ('Current Annual file already created. ')
+        if printout is True:
+            print ('Current Annual file already created. ')
 
-    print('Processing Complete. ')
+    if printout is True:
+        print('Processing Complete. ')
 
 
 if __name__ == '__main__':

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+- Made Hourly-Related print statements dependent upon an optional flag
+  [IMLCZO-273](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-273)
+
 ### Fixed
 - Add missing variable import in `create_header` function in `contact_files.py`
   [IMLCZO-272](https://opensource.ncsa.illinois.edu/jira/browse/IMLCZO-267)
