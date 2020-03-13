@@ -47,7 +47,7 @@ def main():
     if os.path.exists(datafile_file):
         datafile = open(datafile_file, 'r')
     else:
-        print "Missing File to Parse. "
+        print("Missing File to Parse.")
         return
 
     sensor_client = SensorsApi(host=url,
@@ -74,7 +74,7 @@ def update_sensors_stats(sensor_client, sensor_names):
 
     for sensor_name in sensor_names:
         sensor_raw = sensor_client.sensor_get_by_name(sensor_name)
-        sensor = sensor_raw.json()[0]
+        sensor = sensor_raw.json()["sensors"]
         if len(sensor) == 1:
             sensor = sensor[0]
             sensor_id = sensor['id']
@@ -103,22 +103,26 @@ def parse_data(timestamp, config, sensor_names, parameters, parameters_updated, 
     latitude = config['sensor']['geometry']['coordinates'][1]
     elevation = config['sensor']['geometry']['coordinates'][2]
 
-    print "Parsing Datafile: " + str(datafile.name)
-    print "Number of Rows to Parse = " + str(len(all_data))
+    print("Parsing Datafile: " + str(datafile.name))
+    print("Number of Rows to Parse = " + str(len(all_data)))
 
     for sensor_name in sensor_names:
 
-        print 'sensor_name is ' + sensor_name
+        print('sensor_name is ' + sensor_name)
 
         # Get Sensor information for the Sensor Name
         sensor_raw = sensor_client.sensor_get_by_name(sensor_name)
-        parse_sensor = sensor_raw.json()[0]
-        sensor_id = parse_sensor['id']
+        parse_sensor = sensor_raw.json()["sensors"]
+        if len(parse_sensor) == 1:
+            sensor = parse_sensor[0]
+            sensor_id = sensor['id']
+        else:
+            continue
 
         # Get Stream information for the Sensor Name
         sensor_name = parse_sensor['name']
         stream_raw = stream_client.stream_get_by_name_json(sensor_name)
-        parse_stream = stream_raw[0]
+        parse_stream = stream_raw['streams'][0]
         stream_id = parse_stream['id']
 
         # Create Datapoints for each date for this Sensor Name
@@ -150,7 +154,7 @@ def parse_data(timestamp, config, sensor_names, parameters, parameters_updated, 
                         else:
                             properties[x] = data_value
                     else:
-                        print "Data Field is blank - Not Parsing"
+                        print("Data Field is blank - Not Parsing")
             # Create Datapoint
             datapoint = {
                 'start_time': start_time,

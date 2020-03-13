@@ -89,7 +89,7 @@ def update_sensors_stats(sensor_client, sensor_names, printout=False):
         sensor = sensor_raw.json()["sensors"]
         if len(sensor) == 1:
             sensor = sensor[0]
-            sensor_id = str(sensor['id'])
+            sensor_id = sensor['id']
             if printout is True:
                 print("Sensor found. Updating " + sensor_id)
             sensor_client.sensor_statistics_post(sensor_id)
