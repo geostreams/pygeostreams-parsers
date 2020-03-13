@@ -70,14 +70,10 @@ def main():
     header_values = multi_config['header_to_parameters']
 
     # The Clients
-    sensor_client = SensorsApi(host=url, key=key,
-                               username=user, password=password)
-    stream_client = StreamsApi(host=url, key=key,
-                               username=user, password=password)
-    datapoint_client = DatapointsApi(host=url, key=key,
-                                     username=user, password=password)
-    collections_client = CollectionsApi(host=url, key=key,
-                                        username=user, password=password)
+    sensor_client = SensorsApi(host=url, username=user, password=password)
+    stream_client = StreamsApi(host=url, username=user, password=password)
+    datapoint_client = DatapointsApi(host=url, username=user, password=password)
+    collections_client = CollectionsApi(host=url, username=user, password=password)
 
     # Get Newest Local File
     print("Will get newest local file to parse. ")
@@ -121,7 +117,7 @@ def main():
     upload_file(url, key, dataset_id, newest_file, datafile_name)
 
     if os.path.exists(newest_file):
-        datafile = open(newest_file, 'rb')
+        datafile = open(newest_file, 'r')
     else:
         print "Missing Newest File. "
         return
@@ -244,11 +240,11 @@ def upload_file(url, key, dataset_id, datafile, filename):
             existing_file_id = dataset_file['id']
             print existing_file_id
 
-    if existing_file_id == None:
+    if existing_file_id is not None:
         print("Uploading File to Clowder. ")
         r = requests.Session()
         response = r.post("%s/api/uploadToDataset/%s?key=%s" % (url, dataset_id, key),
-                          files={'File': open(datafile, 'rb')})
+                          files={'File': open(datafile, 'r')})
         if response.status_code != 200:
             print('Problem uploading file  : [%d] - %s)' %
                   (response.status_code, response.text))

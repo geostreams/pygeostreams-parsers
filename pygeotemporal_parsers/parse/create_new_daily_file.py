@@ -93,7 +93,7 @@ def main():
             r = requests.Session()
             response = r.post("%s/api/uploadToDataset/%s?key=%s" %
                               (location, dataset_id, key),
-                              files={'File': open(previous_file_name, 'rb')}
+                              files={'File': open(previous_file_name, 'r')}
                               )
             if response.status_code != 200:
                 print('Problem uploading file  : [%d] - %s)' %

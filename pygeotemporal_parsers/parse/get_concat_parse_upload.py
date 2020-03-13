@@ -75,12 +75,9 @@ def main():
     header_status = False
     
     # The Clients
-    sensor_client = SensorsApi(host=url, key=key,
-                               username=user, password=password)
-    stream_client = StreamsApi(host=url, key=key,
-                               username=user, password=password)
-    datapoint_client = DatapointsApi(host=url, key=key,
-                                     username=user, password=password)
+    sensor_client = SensorsApi(host=url, username=user, password=password)
+    stream_client = StreamsApi(host=url, username=user, password=password)
+    datapoint_client = DatapointsApi(host=url, username=user, password=password)
 
     # GET NEW FILES start #
 
@@ -93,8 +90,7 @@ def main():
         print "Missing Downloads Directory. "
         return
 
-    source_files = get_file_list(None, url + '/', key,
-        config['dataset_source_id'])
+    source_files = get_file_list(None, url + '/', key, config['dataset_source_id'])
 
     # Filter out any previously parsed files
     num_new_files = 0
@@ -159,7 +155,7 @@ def main():
     # PARSE FILES start #
 
     if os.path.exists(parse_file_name):
-        datafile = open(parse_file_name, 'rb')
+        datafile = open(parse_file_name, 'r')
     else:
         print "Missing File to Parse. "
         return

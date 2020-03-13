@@ -36,7 +36,6 @@ def main():
     url = multi_config['inputs']['location']
     user = multi_config['inputs']['user']
     password = multi_config['inputs']['password']
-    key = multi_config['inputs']['key']
     local_path = multi_config['inputs']['file_path']
     datafile_file = str(local_path) + multi_config['inputs']['parse']
     timestamp = multi_config['inputs']['timestamp']
@@ -46,17 +45,17 @@ def main():
     config = multi_config['config']
 
     if os.path.exists(datafile_file):
-        datafile = open(datafile_file, 'rb')
+        datafile = open(datafile_file, 'r')
     else:
         print "Missing File to Parse. "
         return
 
-    sensor_client = SensorsApi(host=url, key=key,
-                              username=user, password=password)
-    stream_client = StreamsApi(host=url, key=key,
-                              username=user, password=password)
-    datapoint_client = DatapointsApi(host=url, key=key,
-                                    username=user, password=password)
+    sensor_client = SensorsApi(host=url,
+                               username=user, password=password)
+    stream_client = StreamsApi(host=url,
+                               username=user, password=password)
+    datapoint_client = DatapointsApi(host=url,
+                                     username=user, password=password)
 
     # Parse Data
     parse_data(timestamp, config, sensor_names, parameters, parameters_updated, datafile,
@@ -75,10 +74,10 @@ def update_sensors_stats(sensor_client, sensor_names):
 
     for sensor_name in sensor_names:
         sensor_raw = sensor_client.sensor_get_by_name(sensor_name)
-        sensor = sensor_raw.json()
+        sensor = sensor_raw.json()[0]
         if len(sensor) == 1:
             sensor = sensor[0]
-            sensor_id = str(sensor['id'])
+            sensor_id = sensor['id']
             print("Sensor found. Updating " + sensor_id)
             sensor_client.sensor_statistics_post(sensor_id)
         else:

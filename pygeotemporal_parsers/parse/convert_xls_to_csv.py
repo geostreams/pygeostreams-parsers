@@ -59,7 +59,7 @@ def convert_files(main_dir, new_files, data_dir):
     """
 
     # The file that contains the list of new files to convert
-    new_file_name = open(os.path.join(main_dir, new_files), 'rb')
+    new_file_name = open(os.path.join(main_dir, new_files), 'r')
     new_file_list = new_file_name.read()
     new_file_name.close()
 

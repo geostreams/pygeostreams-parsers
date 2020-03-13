@@ -1,6 +1,8 @@
 inputs:
   location: "http://localhost:9000"
   key: "clowder_key"
+  username: "username"
+  password: "password"
   file_path: "full-path/pygeotemporal_parsers/"
   aggregate: "parse/flux_tower/aggregate"
   aggregate_header: "parse/flux_tower/aggrHeader"

@@ -1,8 +1,8 @@
 inputs:
   location: "http://localhost:9000"
   key: "clowder_key"
-  user: "clowder_username"
-  password: "clowder_password"
+  username: ""
+  password: ""
   file_path: "full-path/pygeotemporal_parsers/"
   timestamp: "TIMESTAMP"
   headers: 4

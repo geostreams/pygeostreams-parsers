@@ -26,14 +26,11 @@ def main():
     url = multi_config['inputs']['location']
     user = multi_config['inputs']['user']
     password = multi_config['inputs']['password']
-    key = multi_config['inputs']['key']
     sensor_names = multi_config['sensorscreate']
     config = multi_config['config']
 
-    sensor_client = SensorsApi(host=url, key=key,
-                               username=user, password=password)
-    stream_client = StreamsApi(host=url, key=key,
-                               username=user, password=password)
+    sensor_client = SensorsApi(host=url, username=user, password=password)
+    stream_client = StreamsApi(host=url, username=user, password=password)
 
     # Create Sensors and Streams
     create_sensors_and_streams(
@@ -62,13 +59,13 @@ def create_sensors_and_streams(
             config['sensor']['properties']['type']['title']
         )
         sensor = sensor_client.sensor_post_json(sensor_json)
-        print "Created Sensor " + str(sensor['id'])
+        print("Created Sensor " + str(sensor['id']))
 
         # Create the Stream
         stream_json = stream_client.stream_create_json_from_sensor(sensor)
         stream_details = stream_client.stream_post_json(stream_json)
         stream_id = stream_details['id']
-        print "Created Stream  " + str(stream_id)
+        print("Created Stream  " + str(stream_id))
 
     return
 

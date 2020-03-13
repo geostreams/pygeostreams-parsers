@@ -25,11 +25,9 @@ def main():
     url = multi_config['inputs']['location']
     user = multi_config['inputs']['user']
     password = multi_config['inputs']['password']
-    key = multi_config['inputs']['key']
     sensor_names = multi_config['sensorsdelete']
 
-    sensor_client = SensorsApi(host=url, key=key,
-                              username=user, password=password)
+    sensor_client = SensorsApi(host=url, username=user, password=password)
 
     # Delete all existing Sensors, Streams, and Datapoints
     delete_sensors(sensor_client, sensor_names)

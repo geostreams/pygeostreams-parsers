@@ -1,6 +1,8 @@
 inputs:
   location: "http://localhost:9000"
   key: "clowder_key"
+  username: ""
+  password: ""
   file_path: "full-path/allerton/pygeotemporal_parsers/"
   aggregate: "parse/allerton/aggregate"
   aggregate_header: "parse/allerton/aggrHeader"

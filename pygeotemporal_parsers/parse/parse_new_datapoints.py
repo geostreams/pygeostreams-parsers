@@ -53,17 +53,17 @@ def main():
     config = multi_config['config']
 
     if os.path.exists(datafile_file):
-        datafile = open(datafile_file, 'rb')
+        datafile = open(datafile_file, 'r')
     else:
-        print "Missing File to Parse. "
+        print("Missing File to Parse. ")
         return
 
-    sensor_client = SensorsApi(host=url, key=key,
-                              username=user, password=password)
-    stream_client = StreamsApi(host=url, key=key,
-                              username=user, password=password)
-    datapoint_client = DatapointsApi(host=url, key=key,
-                                    username=user, password=password)
+    sensor_client = SensorsApi(host=url,
+                               username=user, password=password)
+    stream_client = StreamsApi(host=url,
+                               username=user, password=password)
+    datapoint_client = DatapointsApi(host=url,
+                                     username=user, password=password)
 
     # Parse Data
     parse_data(timestamp, config, sensor_names, parameters, datafile,
@@ -86,7 +86,7 @@ def update_sensors_stats(sensor_client, sensor_names, printout=False):
             sensor_name = str(sensor_name.replace('&', '%26'))
 
         sensor_raw = sensor_client.sensor_get_by_name(sensor_name)
-        sensor = sensor_raw.json()
+        sensor = sensor_raw.json()["sensors"]
         if len(sensor) == 1:
             sensor = sensor[0]
             sensor_id = str(sensor['id'])
@@ -118,24 +118,23 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
     elevation = config['sensor']['geometry']['coordinates'][2]
 
     if printout is True:
-        print "Parsing Datafile: " + str(datafile.name)
-        print "Number of Rows to Parse = " + str(len(all_data))
+        print("Parsing Datafile: " + str(datafile.name))
+        print("Number of Rows to Parse = " + str(len(all_data)))
 
     for sensor_name in sensor_names:
 
         if '&' in sensor_name:
             sensor_name = str(sensor_name.replace('&', '%26'))
         if printout is True:
-            print 'sensor_name is ' + sensor_name
+            print('sensor_name is ' + sensor_name)
 
         # Get Sensor information for the Sensor Name
-        sensor_raw = sensor_client.sensor_get_by_name(sensor_name)
-        parse_sensor = sensor_raw.json()[0]
-        sensor_id = parse_sensor['id']
+        sensor_response = sensor_client.sensor_get_by_name(sensor_name)
+        sensor_id = sensor_response.json()['sensors'][0]['id']
 
         # Get Stream information for the Sensor Name
         stream_raw = stream_client.stream_get_by_name_json(sensor_name)
-        parse_stream = stream_raw[0]
+        parse_stream = stream_raw['streams'][0]
         stream_id = parse_stream['id']
 
         # Create Datapoints for each date for this Sensor Name
@@ -165,7 +164,7 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
                         properties[x] = data_value
                     else:
                         if printout is True:
-                            print "Data Field is blank - Not Parsing"
+                            print("Data Field is blank - Not Parsing")
             # Create Datapoint
             datapoint = {
                 'start_time': start_time,
@@ -180,14 +179,12 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
                     ]
                 },
                 "properties": properties,
-                'stream_id': str(stream_id),
-                'sensor_id': str(sensor_id),
+                'stream_id': stream_id,
+                'sensor_id': sensor_id,
                 'sensor_name': str(sensor_name)
             }
-
             # Post Datapoint
             datapoint_post = datapoint_client.datapoint_post(datapoint)
-
             if printout is True:
                 print("Created Datapoint %s for Sensor %s Stream %s for %s"
                       % (str(datapoint_post.json()['id']), str(sensor_id),

@@ -56,14 +56,15 @@ def main():
         printout = False
 
     # Config File
-    multi_config = yaml.load(open(opts.config, 'r'))
+    multi_config = yaml.safe_load(open(opts.config, 'r'))
 
     # Variables from the config file
     #   Local Path Information
     local_path = multi_config['inputs']['file_path']
     #   For Clowder Items
     url = multi_config['inputs']['location']
-    key = multi_config['inputs']['key']
+    username = multi_config['inputs']['username']
+    password = multi_config['inputs']['password']
     #   For Aggregating New Data Files
     current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     file_set_name = (multi_config['inputs']['aggregate'] + str(current_time) +
@@ -99,9 +100,9 @@ def main():
     header_status = False
 
     # The Clients
-    sensor_client = SensorsApi(host=url, key=key)
-    stream_client = StreamsApi(host=url, key=key)
-    datapoint_client = DatapointsApi(host=url, key=key)
+    sensor_client = SensorsApi(host=url, username=username, password=password)
+    stream_client = StreamsApi(host=url, username=username, password=password)
+    datapoint_client = DatapointsApi(host=url, username=username, password=password)
 
     # GET NEW FILES start #
 
@@ -117,7 +118,7 @@ def main():
     parse_file.close()
 
     if not os.path.isdir(downloads):
-        print "Missing Downloads Directory. "
+        print("Missing Downloads Directory.")
         return
 
     source_files = os.listdir(downloads)
@@ -130,10 +131,10 @@ def main():
             output_file.write(source_file + '\n')
             num_new_files += 1
     if printout is True:
-        print "num_new_files here is = " + str(num_new_files)
+        print("num_new_files here is = " + str(num_new_files))
     if num_new_files < 1:
         if printout is True:
-            print "No new files to concat - exiting"
+            print("No new files to concat - exiting")
         return
 
     # Ensure the files are closed properly regardless
@@ -144,8 +145,8 @@ def main():
     # CONCAT FILES start #
 
     if printout is True:
-        print "INFO: file to write is: " + str(concat_file_name)
-        print " "
+        print("INFO: file to write is: " + str(concat_file_name))
+        print(" ")
 
     if os.path.isdir(downloads):
 
@@ -157,15 +158,15 @@ def main():
                               total_header_rows, timestamp, printout)
 
             if printout is True:
-                print "INFO: Header is = "
+                print("INFO: Header is = ")
                 for row in header_status:
-                    print row[:-1]
-                print " "
+                    print(row[:-1])
+                print(" ")
 
         # Now to add the non-header data to the file and the daily file
         if header_status is not False:
             if printout is True:
-                print "INFO: Concatenating the data"
+                print("INFO: Concatenating the data")
             # Update Parsing File and Append to Daily File
             concat_files(debug, downloads, header_status, local_path,
                          new_files, file_type, daily_file, parse_file_name,
@@ -177,12 +178,12 @@ def main():
                               hourly_files, printout)
 
     else:
-        print "ERROR: VALID downloads NOT SUPPLIED"
-        print " "
+        print("ERROR: VALID downloads NOT SUPPLIED")
+        print(" ")
 
     if printout is True:
-        print ""
-        print "DONE with Concatenation"
+        print("")
+        print("DONE with Concatenation")
 
     # CONCAT FILES end #
 
@@ -198,10 +199,10 @@ def main():
     # PARSE FILES start #
 
     if os.path.exists(parse_file_name):
-        datafile = open(parse_file_name, 'rb')
+        datafile = open(parse_file_name, 'r')
     else:
         if printout is True:
-            print "Missing File to Parse. "
+            print("Missing File to Parse. ")
         return
 
     # Parse Data
@@ -241,20 +242,20 @@ def move_hourly_files(data_folder, main_dir, new_files,
     # Current data directory with the files to move
     data_directory = os.path.join(main_dir, data_folder)
     if printout is True:
-        print "INFO: Directory with new files: " + str(data_directory)
+        print("INFO: Directory with new files: " + str(data_directory))
 
     # Current directory for the new files
     hourly_files_dir = os.path.join(main_dir, hourly_files)
     if printout is True:
-        print "INFO: Directory for the new files: " + str(hourly_files_dir)
+        print("INFO: Directory for the new files: " + str(hourly_files_dir))
 
-    new_files = open(os.path.join(main_dir, new_files), 'rb')
+    new_files = open(os.path.join(main_dir, new_files), 'r')
     new_file_list = new_files.read()
     new_files.close()
 
     if printout is True:
-        print "Files to Move"
-        print new_file_list
+        print("Files to Move")
+        print(new_file_list)
 
     # locate the data files
     datafiles = [datafile for datafile in os.listdir(data_directory) if

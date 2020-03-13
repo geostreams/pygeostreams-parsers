@@ -1,23 +1,25 @@
 inputs:
   location: "http://localhost:9000"
   key: "clowder_key"
+  username: ""
+  password: ""
   file_path: "full-path/pygeotemporal_parsers/"
   timestamp: "TIMESTAMP"
   headers: 4
   verify: "CTDdata"
   file_type: ".dat"
   file_key: "Allerton_CR1000_CTDdata"
-  new_files: "parse/allerton/allerton_new_files.csv"
-  aggregate: "parse/allerton/allerton_aggregate"
+  new_files: "allerton/allerton_new_files.csv"
+  aggregate: "allerton/allertonAggregate"
   aggregate_file_type: ".csv"
-  parse: "parse/allerton/allerton_parse.csv"
-  downloads: "parse/allerton/allerton_files"
-  hourly_files: "parse/allerton/HourlyFiles"
+  parse: "allerton/allerton_parse.csv"
+  downloads: "allerton"
+  hourly_files: "allerton/HourlyFiles"
 config:
   sensor:
       geometry:
           type": Point
-          coordinates: [-88.661587, 40.025055, 0]
+          coordinates: [-88.661587,40.025055, 0]
       properties:
           region: "Illinois"
           type:
@@ -33,8 +35,8 @@ config:
           popupContent: ""
           huc: ""
 parameters:
-  WindDir: "05103-L Anemometer",
-  WS_ms: "05103-L Anemometer",
+  WindDir: "05103-L Anemometer"
+  WS_ms: "05103-L Anemometer"
   Rain_mm_Tot: "TR-525I Rain Gauge"
 sensors:
   - "TR-525I Rain Gauge"
