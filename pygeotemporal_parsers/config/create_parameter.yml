@@ -1,0 +1,18 @@
+# Example file for creating parameters
+inputs:
+  location: "http://localhost"
+  user: 
+  password: 
+new_parameters:
+    parameter_name:
+      title: Title
+      categories:
+        - name: CATEGORY_NAME
+          detail_type: TYPE
+      explore_view: TRUE/FALSE
+      search_view: TRUE/FALSE
+      unit: UNIT
+      scale_names:
+        - 
+      scale_colors:
+        -
