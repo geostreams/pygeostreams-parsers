@@ -20,6 +20,7 @@ from datetime import datetime
 from pygeotemporal.sensors import SensorsApi
 from pygeotemporal.streams import StreamsApi
 from pygeotemporal.datapoints import DatapointsApi
+from pygeotemporal.client import GeostreamsClient
 
 
 def main():
@@ -45,8 +46,9 @@ def main():
     datafile_file = str(local_path) + multi_config['inputs']['parse']
     timestamp = multi_config['inputs']['timestamp']
     timestamp_format = multi_config['inputs']['timestamp_format']
-    parameters = multi_config['parameters']
-    parameters_updated = multi_config['parameters_updated']
+    source = multi_config['inputs']['source']
+    # parameters = multi_config['parameters']
+    param_mapping = multi_config['param_mapping']
     sensor_names = multi_config['sensors']
     config = multi_config['config']
 
@@ -57,14 +59,16 @@ def main():
         return
 
     sensor_client = SensorsApi(host=url,
-                               username=user, password=password)
+                                username=user, password=password)
     stream_client = StreamsApi(host=url,
-                               username=user, password=password)
+                                username=user, password=password)
     datapoint_client = DatapointsApi(host=url,
-                                     username=user, password=password)
+                                username=user, password=password)
+    parameters_client = GeostreamsClient(host=url, 
+                                username=user, password=password)
 
     # Parse Data
-    parse_data(timestamp, timestamp_format, config, sensor_names, parameters, parameters_updated, datafile,
+    parse_data(timestamp, timestamp_format, config, sensor_names, datafile, source, 
                sensor_client, stream_client, datapoint_client)
 
     # Update the sensors
@@ -73,6 +77,10 @@ def main():
 
     # Ensure the file is closed properly regardless
     datafile.close()
+
+def get_params(input_parameters, parameters_client):
+    """Get parameter information from geostreams-api 
+    using the parameter names in yaml file """
 
 
 def update_sensors_stats(sensor_client, sensor_names):
@@ -92,7 +100,7 @@ def update_sensors_stats(sensor_client, sensor_names):
     print("Sensor stats updated.")
 
 
-def parse_data(timestamp, timestamp_format, config, sensor_names, parameters, parameters_updated, datafile,
+def parse_data(timestamp, timestamp_format, config, sensor_names, datafile, source, 
                sensor_client, stream_client, datapoint_client):
     """Parse all the Data"""
 
@@ -128,11 +136,14 @@ def parse_data(timestamp, timestamp_format, config, sensor_names, parameters, pa
 
         # Get Stream information for the Sensor Name
         sensor_name = sensor['name']
-        stream_raw = stream_client.stream_get_by_name_json(sensor_name)
+        stream_raw = stream_client.stream_get_by_name_json(source + "-" + sensor_name)
+        
         # Create a stream if not present
         if stream_raw is None or len(stream_raw) == 0 :
             stream_json = stream_client.stream_create_json_from_sensor(sensor)
+            stream_json['name']=source + '-' + stream_json['name'] 
             parse_stream = stream_client.stream_post_json(stream_json)
+            print(parse_stream)
         else:
             parse_stream = stream_raw['streams'][0]
         stream_id = parse_stream['id']
@@ -164,7 +175,7 @@ def parse_data(timestamp, timestamp_format, config, sensor_names, parameters, pa
             properties = {}
             # Get the Data Value for each parameter
             for x in parameters:
-                if x in csv_keys and parameters[x] == sensor_name:
+                if x in csv_keys:
                     data_value = all_data[row][x]
                     # Set Sensor Name Column Data
                     if data_value != '':
