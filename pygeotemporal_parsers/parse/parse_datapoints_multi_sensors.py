@@ -1,15 +1,10 @@
 """
-    Parse Concatenated New Data for Provided Sensor Names at a Location
-    (Does not Create or Delete any Sensors or Streams)
+    Parse Concatenated New Data for for multiple sensors given in the file
+    (Creates streams if not present. Does not create new sensors or parameters)
 
-    Will utilize defined new Parameter Names in the Config File
-
-    Timeformat: '%Y-%m-%d %H:%M:%S'
-                '%m/%d/%Y %H:%M:%S %p'
     
-    python parse_datapoints_multi_sensors.py -c /Users/aarajh/pygeotemporal-parsers/EPA_GLM/zooplankton.yaml
+    python parse_datapoints_multi_sensors.py -c /Users/aarajh/pygeotemporal-parsers/EPA_GLM/phytoplankton.yaml
 """
-
 
 import os
 import sys
@@ -24,6 +19,8 @@ from pygeotemporal.sensors import SensorsApi
 from pygeotemporal.streams import StreamsApi
 from pygeotemporal.datapoints import DatapointsApi
 from pygeotemporal.client import GeostreamsClient
+from pygeotemporal.cache import CacheApi
+from datetime import date,datetime
 
 
 def main():
@@ -50,14 +47,12 @@ def main():
     local_path = multi_config['inputs']['file_path']
     datafile_file = str(local_path) + multi_config['inputs']['parse']
     timestamp = multi_config['inputs']['timestamp']
-    timestamp_format = multi_config['inputs']['timestamp_format']
     ignore_columns = multi_config['inputs']['ignore_columns']
     source = multi_config['inputs']['source']
     sensor = multi_config['inputs']['sensor']
-    # parameters = multi_config['parameters']
     param_mapping = multi_config['param_mapping']
-    sensor_names = multi_config['sensors']
-    config = multi_config['config']
+
+    # config = multi_config['config']
 
     if not os.path.exists(datafile_file):
         print("Missing File to Parse.")
@@ -71,50 +66,53 @@ def main():
                                 username=user, password=password)
     parameters_client = GeostreamsClient(host=url, 
                                 username=user, password=password)
+    cache_client = CacheApi(host=url, username= user, password=password)
+
 
     raw_data = pd.read_csv(datafile_file, 
                             parse_dates=[timestamp], 
                             infer_datetime_format= True,
                             usecols= lambda x: x not in ignore_columns, 
                         )
+    ## Preprocess data
+
+    # Remove spaces in sensor name if any
     raw_data[sensor] = raw_data[sensor].str.replace(' ','')
 
-    raw_data.set_index(sensor, inplace= True)
-    sensors = raw_data.index
+    # Remove data points for sensors in skip_sensors list if provided
+    if 'skip_sensors' in multi_config:
+        skip_sensors = multi_config['skip_sensors']
+        raw_data = raw_data[~raw_data[sensor].isin(skip_sensors)]
+
+    sensors = raw_data[sensor].unique()
+
+    print("Getting sensor/stream data from geostreams-api. ")
     sensors_data, streams_data = get_sensor_streams(sensors, 
                                                     sensor_client, 
                                                     stream_client, 
                                                     source)
-    # print(raw_data[timestamp].dt.strftime('%Y-%m-%dT%H:%M:%SZ'))
 
-
-    # Parse Data
+    #  Parse Data
     print("Parsing Datafile: " + str(os.path.basename(datafile_file)))
-    parse_data(raw_data, sensors_data, streams_data, datapoint_client, timestamp, param_mapping)
+    parse_data(raw_data, sensors_data, streams_data, datapoint_client, sensor, timestamp, param_mapping)
 
-    # Parse Data
-    # parse_data(timestamp, timestamp_format, config, sensor_names, datafile, source, 
-    #            sensor_client, stream_client, datapoint_client)
-
-    # Update the sensors
+    ## Update the sensors
     print("Will update sensor stats. ")
     update_sensors_stats(sensor_client, sensors)
 
-
-
-
+    print("Done!")
 
 def get_sensor_streams(sensor_list, sensor_client, stream_client, source):
     sensors_data = {}
     streams_data = {}
-    for sensor_name in sensor_list.unique():
+    for sensor_name in sensor_list:
         # Get Sensor information for the Sensor Name
         try:
             sensor_raw = sensor_client.sensor_get_by_name(sensor_name)
             sensor_raw = sensor_raw.json()["sensors"][0]
             # sensor_raw.pop('parameters')
         except (IndexError, TypeError) as e:
-            print ("Error getting the sensor info. Are you sure it exists?\n", str(e))
+            print ("Error getting the sensor info",sensor_name,". Are you sure it exists?\n", str(e))
             sys.exit(1)
 
         sensors_data[sensor_name] = sensor_raw
@@ -144,7 +142,8 @@ def update_sensors_stats(sensor_client, sensor_names):
             sensor = sensor[0]
             sensor_id = sensor['id']
             print("Sensor found. Updating " + str(sensor_id))
-            # sensor_client.sensor_statistics_post(sensor_id)
+            res = sensor_client.sensor_statistics_post(sensor_id)
+            print( res.text )
         else:
             print("Sensor not found " + sensor_name)
 
@@ -152,19 +151,36 @@ def update_sensors_stats(sensor_client, sensor_names):
 
 def param_reader(root, data):
     for key, value in root.items():
+        # Add check if value is some/any other type of object
+        # Use try except? PROBABLY NOT 
         if isinstance(value, str) or isinstance(value, float) or isinstance(value, int):
             root[key] = data[value]
         else:
             root[key] = param_reader(value, data)
     return root
 
-def parse_data(raw_data, sensors_data, streams_data, datapoint_client, timestamp, param_mapping):
+def get_date_by_season_year(season, year):
+    if season == 'Spring':
+        return date(year, 4, 1)
+    if season == 'Summer':
+        return date(year, 6, 1)
+    else:
+        return None
+
+def parse_data(raw_data, sensors_data, streams_data, datapoint_client, sensor, timestamp, param_mapping):
     """Parse all the Data"""
 
     print("Number of Rows to Parse = " + str(len(raw_data.index)))
 
-    for sensor_name, data in raw_data.iterrows():
-        date = data[timestamp].strftime('%Y-%m-%dT%H:%M:%SZ')
+    for index, data in raw_data.iterrows():
+        # Get date if available otherwise compute a random date based on season and year
+        # (Specifically for phytoplankton as some datapoints donot have a date)
+        try:
+            date = data[timestamp].strftime('%Y-%m-%dT%H:%M:%SZ')
+        except (ValueError):
+            date = get_date_by_season_year(data['CRUISE'],data['YEAR']).strftime('%Y-%m-%dT%H:%M:%SZ')
+        print (date)
+        sensor_name = data[sensor]
         stream_id = streams_data[sensor_name]['id']
         sensor_id = sensors_data[sensor_name]['id']
         properties = copy.deepcopy(param_mapping)
@@ -185,80 +201,9 @@ def parse_data(raw_data, sensors_data, streams_data, datapoint_client, timestamp
             % (str(datapoint_post.json()['id']), str(sensor_id),
             str(stream_id), str(date)))
 
+    print("Parsing Done")
 
-    # for sensor_name in sensor_names:
-
-    #     print('sensor_name is ' + sensor_name)
-
-    #     # Get geopoints if not provided
-    #     if not hasattr(config, 'sensor'):
-    #         longitude = sensor['geometry']['coordinates'][0]
-    #         latitude = sensor['geometry']['coordinates'][1]
-    #         elevation = sensor['geometry']['coordinates'][2]
-
-    #     # Create Datapoints for each date for this Sensor Name
-    #     for row in range(len(all_data)):
-
-    #         # Get the Date in the proper format
-    #         raw_date = all_data[row][timestamp]
-    #         if '/' in raw_date:
-    #             sensor_date_raw = (
-    #                 datetime.strptime(raw_date, timestamp_format))
-    #             sensor_timestamp = time.mktime(sensor_date_raw.timetuple())
-    #             sensor_date = (datetime.utcfromtimestamp(sensor_timestamp)
-    #                            .strftime('%Y-%m-%dT%H:%M:%SZ'))
-    #         else:
-    #             sensor_date = (datetime.strptime(raw_date,timestamp_format)
-    #                            .strftime('%Y-%m-%dT%H:%M:%SZ'))
-    #         # Start Date == End Date
-    #         start_time = sensor_date
-    #         end_time = sensor_date
-    #         properties = {}
-    #         # Get the Data Value for each parameter
-    #         for x in parameters:
-    #             if x in csv_keys:
-    #                 data_value = all_data[row][x]
-    #                 # Set Sensor Name Column Data
-    #                 if data_value != '':
-    #                     if parameters_updated is not None:
-    #                         properties[parameters_updated[x]] = data_value
-    #                     else:
-    #                         properties[x] = data_value
-    #                 else:
-    #                     print("Data Field is blank - Not Parsing")
-    #         # Create Datapoint
-    #         datapoint = {
-    #             'start_time': start_time,
-    #             'end_time': end_time,
-    #             'type': 'Feature',
-    #             'geometry': {
-    #                 'type': "Point",
-    #                 'coordinates': [
-    #                     longitude,
-    #                     latitude,
-    #                     elevation
-    #                 ]
-    #             },
-    #             "properties": properties,
-    #             'stream_id': str(stream_id),
-    #             'sensor_id': str(sensor_id),
-    #             'sensor_name': str(sensor_name)
-    #         }
-
-    #         print(datapoint)
-
-    #         # Post Datapoint
-    #         # datapoint_post = datapoint_client.datapoint_post(datapoint)
-
-    #         # print("Created Datapoint %s for Sensor %s Stream %s for %s"
-    #         #       % (str(datapoint_post.json()['id']), str(sensor_id),
-    #         #          str(stream_id), str(sensor_date)))
-
-    # # End of Loop
-
-    # print("Parsing Done")
-
-    # return
+    return
 
 
 if __name__ == '__main__':

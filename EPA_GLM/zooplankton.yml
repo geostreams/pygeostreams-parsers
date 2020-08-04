@@ -1,0 +1,88 @@
+inputs:
+  location: "http://141.142.211.239/geostreams"
+  user: "aarajh@illinois.edu"
+  password: ""
+  file_path: "/Users/aarajh/pygeotemporal-parsers/EPA_GLM/"
+  timestamp: "SAMPLE DATE"
+  sensor: "STATION"
+  file_type: ".csv"
+  parse: "zooplankton.csv"
+  source: "GLENDA"
+  ignore_columns:
+    - YEAR
+    - CRUISE
+    - NET MESH
+    - LAKE
+# Used by parse_datapoints_multi_sensors to map file column values to fields
+param_mapping:
+    zooplankton-biomass:
+      Calanoid copepod adults: CAL_ugDW/m3
+      Calanoid copepod copepodites: CALIM_ugDW/m3
+      Cyclopoid copepod adults: CYC_ugDW/m3
+      Cyclopoid copepod copepodites: CYCIM_ugDW/m3
+      Daphnia : DAP_ugDW/m3
+      Non-daphnid herbivorous cladocerans: NDAP_ugDW/m3
+      Predatory cladocerans: PRED_ugDW/m3
+    zooplankton-density:
+      Calanoid copepod adults: CAL_Num/m3
+      Calanoid copepod copepodites: CALIM_Num/m3
+      Cyclopoid copepod adults: CYC_Num/m3
+      Cyclopoid copepod copepodites: CYCIM_Num/m3
+      Daphnia : DAP_Num/m3
+      Non-daphnid herbivorous cladocerans: NDAP_Num/m3
+      Predatory cladocerans: PRED_Num/m3
+
+# Used by create_parameter_and_mapping for generating parameter
+new_parameters:
+    zooplankton-biomass:
+      title: Zooplankton Biomass
+      categories:
+       -  name: Biology
+          detail_type: stacked_bar
+      unit: ugDW/m^3
+      explore_view: true
+      search_view: true
+      scale_names:
+        - Calanoid copepod adults
+        - Calanoid copepod copepodites
+        - Cyclopoid copepod adults
+        - Cyclopoid copepod copepodites
+        - Daphnia
+        - Non-daphnid herbivorous cladocerans
+        - Predatory cladocerans
+      scale_colors:
+        - '#396AB1'
+        - '#DA7C30'
+        - '#3E9651'
+        - '#CC2529'
+        - '#535154'
+        - '#6B4C9A'
+        - '#922428'
+    zooplankton-density:
+      title: Zooplankton Density
+      categories:
+        - name: Biology
+          detail_type: stacked_bar
+      explore_view: true
+      search_view: true
+      unit: 'Num/m^3'
+      scale_names:
+        - Calanoid copepod adults
+        - Calanoid copepod copepodites
+        - Cyclopoid copepod adults
+        - Cyclopoid copepod copepodites
+        - Daphnia
+        - Non-daphnid herbivorous cladocerans
+        - Predatory cladocerans
+      scale_colors:
+        - '#396AB1'
+        - '#DA7C30'
+        - '#3E9651'
+        - '#CC2529'
+        - '#535154'
+        - '#6B4C9A'
+        - '#922428'
+
+
+
+

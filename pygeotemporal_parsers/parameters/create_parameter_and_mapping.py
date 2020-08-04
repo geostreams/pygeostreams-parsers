@@ -1,5 +1,5 @@
-"""Create Sensors and Streams"""
-""" python create_parameter_and_mapping.py -c /Users/aarajh/pygeotemporal-parsers/EPA_GLM/zooplankton.yaml """
+"""Create Parameters"""
+""" python create_parameter_and_mapping.py -c /Users/aarajh/pygeotemporal-parsers/EPA_GLM/pythoplankton.yaml """
 
 
 import argparse
@@ -44,11 +44,11 @@ def create_parameters(parameters, parameters_client):
         param_body = {'name': key}
         categories_body = value.pop('categories')
         # Set explore_view to false if not provided in yaml
-        if not hasattr(value, explore_view)
-            value.add('explore_view', 'false')
+        if not hasattr(value, 'explore_view'):
+            value['explore_view'] = False
         # Set search_view to false if not provided in yaml
-        if not hasattr(value, search_view)
-            value.add('search_view', 'false')
+        if not hasattr(value, 'search_view'):
+            value['search_view']= False
         param_body.update(value)
 
         post_data = {'parameter':param_body,'categories': categories_body}

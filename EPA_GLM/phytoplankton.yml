@@ -1,0 +1,68 @@
+inputs:
+  location: "https://141.142.211.239/geostreams"
+  user: "aarajh@illinois.edu"
+  password: ""
+  file_path: "/Users/aarajh/pygeotemporal-parsers/EPA_GLM/"
+  file_type: ".csv"
+  parse: "phytoplankton.csv"
+  timestamp: "START_DATE_TIME"
+  sensor: "STATION"
+  # Appends souce name to streams
+  source: "GLENDA"
+  ignore_columns:
+    - Grand Total
+skip_sensors:
+    - SUFE
+    - ERFE
+    - MIFE
+    - HUFE
+    - SUFO
+    - MIFO
+    - ONFO
+    - HUFO
+    - ERFO
+param_mapping:
+    phytoplankton-biovolume:
+      Centric diatoms: BAC
+      Pennate diatoms: BAP
+      Chlorophytes: CHL
+      Chrysophytes: CHR
+      Cryptophytes: CRY
+      Cyanophytes: CYA
+      Euglenoids: EUG
+      Pyrrhophytes: PYR
+      Unidentifiable: UNI
+
+new_parameters:
+    phytoplankton-biovolume:
+      title: Phytoplankton biovolume
+      categories:
+       -  name: Biology
+          detail_type: stacked_bar
+      unit: μm^3/ml
+      explore_view: true
+      search_view: true
+      scale_names:
+        - Centric diatoms
+        - Pennate diatoms
+        - Chlorophytes
+        - Chrysophytes
+        - Cryptophytes
+        - Cyanophytes
+        - Euglenoids
+        - Pyrrhophytes
+        - Unidentifiable
+      scale_colors:
+        - '#396AB1'
+        - '#DA7C30'
+        - '#3E9651'
+        - '#CC2529'
+        - '#535154'
+        - '#6B4C9A'
+        - '#922428'
+        - '#948B3D'
+        - '#3ca399'
+
+
+
+
