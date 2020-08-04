@@ -105,6 +105,16 @@ Scripts with their Descriptions:
     * Parse the new Data via `parse_new_datapoints.py`
     * Update the Sensors Stats via `parse_new_datapoints.py`
     * It is intended for this script to be utilized once per hour each day
+* `parse_datapoints_multi_sensor.py`
+    * Parse all new data points from the parsing file
+    * Create streams with source name in them
+    * Supports files with multiple sensor names
+    * Supports parameters with nested objects (for stacked bar graphs)
+    * Updates Sensor Statistics
+    * Created for GLM EPA Biology data file
+* `create_parameter_and_mapping.py`
+    * Creates new paramaters based on the yaml file provided
+    * Creates new category if needed and maps the parameter to the category
 
 <a name="file_locations"></a>
 ### File Locations
@@ -133,11 +143,17 @@ Parse Scripts:
 * `pygeotemporal_parsers/parse/parse_new_datapoints.py`
 * `pygeotemporal_parsers/parse/parse_new_datapoints_new_params.py`
 * `pygeotemporal_parsers/parse/parse_new_hourly_datapoints.py`
+* `pygeotemporal_parsers/parse/parse_datapoints_multi_sensors.py`
+
 
 Sensors Scripts:
 * All scripts are located in the `sensors` folder
 * `pygeotemporal_parsers/sensors/create_sensors_and_streams.py`
 * `pygeotemporal_parsers/sensors/delete_sensors_and_streams.py`
+
+Parameters Scripts:
+* All scripts are located in the `parameters` folder
+* `pygeotemporal_parsers/parameters/create_parameter_and_mapping.py`
 
 <a name="setup"></a>
 ## Setting Up for Usage
@@ -155,6 +171,8 @@ File to edit: `config/your_config.yml`
     * `parse_new_datapoints.py`
 * `multi_config_json_to_csv.yml` is provided as an example for `convert_json_to_csv.py`
 * `new_file_config.yml` is provided as an example for `parse_and_upload_newest_file.py`
+* `multi_sensors.yml` is provided as an example for `parse_datapoints_multi_sensors.py`
+* `create_parameters.yml` is provided as an example for `create_parameter_and_mapping.py`
 
 Note:
 * Ensure all the directory paths are correct
@@ -222,6 +240,23 @@ These are the required YAML items for each of these scripts:
     * `['config'][ all subitems ]`
     * `['parameters']`
     * `['sensors']`
+* `parse_datapoints_multi_sensors.py` ONLY uses these YAML items:
+    * `['inputs']['location']`
+    * `['inputs']['user']`
+    * `['inputs']['password']`
+    * `['inputs']['file_path']`
+    * `['inputs']['file_type']`
+    * `['inputs']['parse']`
+    * `['inputs']['timestamp']`
+    * `['inputs']['sensor']`    
+    * `['inputs']['source']`   
+    * `['inputs']['skip_sensors']`   
+    * `['param_mapping']`
+* `create_new_parameter_mapping.py` ONLY uses these YAML items:
+    * `['inputs']['location']`
+    * `['inputs']['user']`
+    * `['inputs']['password']`   
+    * `['new_parameters']`
 
 This is an example YAML file that can be utilized with variable descriptions:
 
@@ -602,4 +637,6 @@ All scripts are run using the Command Line with one argument:
 * `parse_new_datapoints.py -c full-path-including/multi_config.yml`
 * `parse_new_datapoints_new_params.py -c full-path-including/combo_multi_config_params.yml`
 * `parse_new_hourly_datapoints.py -c full-path-including/hourly_parse_config.yml`
+* `parse_datapoints_multi_sensors.py -c full-path-including/multi_sensors.yml`
+* `create_parameter_and_mapping.py -c full-path-including/create_parameters.yml`
 

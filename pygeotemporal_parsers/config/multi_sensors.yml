@@ -1,0 +1,20 @@
+inputs:
+  location: ""
+  user: ""
+  password: ""
+  file_path: ""
+  file_type: ""
+  parse: ""
+  timestamp: ""
+  sensor: ""
+  # Appends souce name to streams
+  source: ""
+  ignore_columns:
+    - 
+sensors_column: ""
+skip_sensors:
+    - 
+param_mapping:
+    parameter_name:
+      nested_value_name: column_name
+    parameter_name: column_name
