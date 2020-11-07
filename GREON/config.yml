@@ -1,0 +1,90 @@
+host: https://<host>/geostreams
+username: <username for geostreams>
+password: <password for geostreams>
+
+send_email: "false"
+email_recipients: ["slavenas@illinois.edu"]
+
+binning_path: /home/parsers/binning/binning_args.py
+# Add sleep in seconds for each binning thread for systems with less resources
+binning_wait: 0
+# Use lower number of threads for systems with less resources
+n_binning_threads: 4
+
+log_filename: /home/parsers/parsers/gltg-dev/log-gltg-dev.log
+loggernet_dir: /home/parsers/greon-data
+
+gltg-sites:
+  - 'GREON-07'
+  - 'GREON-06'
+  - 'GREON-05'
+  - 'GREON-04'
+  - 'GREON-03'
+  - 'GREON-02'
+  - 'GREON-01'
+ilnlrs-sites:
+  - 'GREON-07'
+  - 'GREON-06'
+  - 'GREON-04'
+  - 'GREON-02'
+  - 'GREON-01'
+
+geocodes:
+  'GREON-01': [-90.17608055555556,38.86943333333333,0]
+  'GREON-02': [-90.17775555555556,38.876333333333335,0]
+  'GREON-03': [-91.227473,43.667321,0]
+  'GREON-04': [-89.3452361111111,38.619175,0]
+  'GREON-05': [-91.280801,43.833298, 0]
+  'GREON-06': [-89.51394166666667,37.29493333333333,0]
+  'GREON-07': [-88.85931111111111,39.88906111111111,0]
+
+popup_text:
+  'GREON-01': 'Mississippi River Backwater, Ellis Bay UMR 202'
+  'GREON-02': 'Mississippi River Main Channel at Alton, IL UMR 202'
+  'GREON-03': 'Mississippi River Backwater, Stoddard, WI, UMR 686'
+  'GREON-04': 'Kaskaskia River at Carlyle Lake, IL'
+  'GREON-05': 'Mississippi River Main Channel at La Crosse, WI UMR 700'
+  'GREON-06': 'Main Channel at Cape Girardeau, MO'
+  'GREON-07': 'Upper Sangamon River at Lake Decatur'
+
+map_parameters:
+    "YSI_Temp_C": "water-temperature-c"
+#    "YSI_Cond_uScm": "conductivity-uscm"
+    "YSI_SpCond_uScm": "specific-conductivity-uscm"
+    "YSI_Sal_PSU": "salinity-psu"
+#    "YSI_ODO_Sat": "dissolved-oxygen-saturation-pct"
+    "YSI_ODO_mgL": "dissolved-oxygen-mgl"
+    "YSI_Turb_FNU": "turbidity-fnu"
+    "YSI_TSS_mgL": "suspended-solids-mgl"
+    "YSI_Chl_RFU": "chlorophyll-rfu"
+    "YSI_Chl_ugL": "chlorophyll-mgl"
+#    "YSI_fDOM_RFU": "flourescent-dissolved-organic-matter-rfu"
+    "YSI_fDOM_QSU": "flourescent-dissolved-organic-matter-qsu"
+    "YSI_NO3_mgL": "nitrate-mgl"
+    "YSI_NH3_mgL": "ammonia-mgl"
+    "YSI_NH4_mgL": "ammonium-mgl"
+    "PAR_Density_Avg": "par-density-avg"
+    "WindSpd_mph":   "wind-speed-mph"
+    "BaroPress_inHg_Avg": "barometric-pressure-24hr-avg-hg"
+    "WindDir": "wind-direction"
+    "RainIn_Tot": "rain-accumulation-24hr-total-inch"
+    "RhPct_Avg": "relative-humidity-24hr-avg"
+    "CompassAve": "compass-heading-24hr-avg"
+#    "AirTempF_Avg": "air-temperature-24hr-avg-f"
+    "WindSpd_mph_Max": "wind-speed-24hr-max-mph"
+#    "PAR_Raw_mV_Avg": "par-avg-mv"
+    "HailHits_Tot": "hail-hits-total-24hr"
+    "YSI_BGAPC_RFU": "blue-green-algae-pct-rfu"
+    "YSI_BGAPC_ugL": "blue-green-algae-pct-ugl"
+    "Nitrate": "nitrate-mgl"
+    "Ammonia/ Ammonium": "ammonia-ammonium-mgl"
+    "Total Nitrogen": "total-nitrogen-mgl"
+    "Sample Below detection limit": "sample-below-detection-limit"
+#    "YSI_Batt_V": "YSI_Batt_V"
+#    "SUNA_DarkAve": "SUNA_DarkAve"
+#    "SUNA_LightAve": "SUNA_LightAve"
+#    "SUNA_Nitrate_uM": "SUNA_Nitrate_uM"
+#    "YSI_CablePwr_V": "YSI_CablePwr_V"
+#    "YSI_WiperPos_V": "YSI_WiperPos_V"
+#    "SUNA_Nitrate_mgL": "SUNA_Nitrate_mgL"
+#    "RECORD": "record"
