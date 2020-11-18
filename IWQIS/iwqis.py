@@ -43,9 +43,9 @@ cacheclient = CacheApi(host=host, username=username, password=password)
 
 
 # iwqis urls
-sites_url = u"https://api.iwqis.iowawis.org/v1/sites"
-datapoints_url = u"https://api.iwqis.iowawis.org/v1/hourly?site_uid=[UID]&begin=[BEGIN]"
-param_url = u"https://api.iwqis.iowawis.org/v1/params/[PARAM]"
+sites_url = u"https://api2.iwqis.iowawis.org/v1/sites"
+datapoints_url = u"https://api2.iwqis.iowawis.org/v1/hourly?site_uid=[UID]&begin=[BEGIN]"
+param_url = u"https://api2.iwqis.iowawis.org/v1/params/[PARAM]"
 
 # config for time
 start_date_get_data = config['new_sensor_start_time']
