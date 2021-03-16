@@ -1,19 +1,20 @@
 inputs:
   location: "http://localhost:9000"
   key: "clowder_key"
-  file_path: "full-path/pygeotemporal_parsers/"
-  aggregate: "parse/aggregate"
-  aggregate_file_type: ".csv"
-  timestamp: "TIMESTAMP"
+  user: "clowder_username"
+  password: "clowder_password"
+  file_path: "full-path/pygeostreams_parsers/"
+  timestamp: "timestamp"
   headers: 4
   verify: "unique"
   file_type: ".dat"
-  file_key: "Hourly_Data_Files_Start_With_This"
   new_files: "parse/new_files.csv"
+  aggregate: "parse/aggregate"
+  aggregate_file_type: ".csv"
   parse: "parse/parse.csv"
-  downloads: "parse"
-  hourly_files: "parse/HourlyFiles"
+  downloads: "parse/downloaded_files"
 config:
+  dataset_source_id: "DatasetID"
   sensor:
       geometry:
           type": Point
@@ -41,5 +42,8 @@ sensors:
   - "Instrument Name 01"
   - "Instrument Name 02"
 sensorscreate:
+  - "Instrument Name 01"
+  - "Instrument Name 02"
+sensorsdelete:
   - "Instrument Name 01"
   - "Instrument Name 02"

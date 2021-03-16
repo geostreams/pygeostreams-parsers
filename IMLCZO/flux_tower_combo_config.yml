@@ -3,7 +3,7 @@ inputs:
   key: "clowder_key"
   user: "clowder_username"
   password: "clowder_password"
-  file_path: "full-path/pygeotemporal_parsers/"
+  file_path: "full-path/pygeostreams_parsers/"
   timestamp: "TIMESTAMP"
   headers: 4
   verify: "flux"

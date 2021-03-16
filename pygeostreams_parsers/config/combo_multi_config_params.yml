@@ -3,7 +3,7 @@ inputs:
   key: "clowder_key"
   user: "clowder_username"
   password: "clowder_password"
-  file_path: "full-path/pygeotemporal_parsers/"
+  file_path: "full-path/pygeostreams_parsers/"
   timestamp: "timestamp"
   headers: 4
   verify: "unique"
@@ -15,6 +15,7 @@ inputs:
   downloads: "parse/downloaded_files"
 config:
   dataset_source_id: "DatasetID"
+  dataset_upload_id: "DatasetID"
   sensor:
       geometry:
           type": Point
@@ -38,12 +39,14 @@ parameters:
   def: "Instrument Name 01"
   ghi: "Instrument Name 02"
   jkl: "Instrument Name 02"
+parameters_updated:
+  abc: "New-Name-01"
+  def: "New-Name-01"
+  ghi: "New-Name-02"
+  jkl: "New-Name-02"
 sensors:
   - "Instrument Name 01"
   - "Instrument Name 02"
 sensorscreate:
-  - "Instrument Name 01"
-  - "Instrument Name 02"
-sensorsdelete:
   - "Instrument Name 01"
   - "Instrument Name 02"

@@ -1,7 +1,7 @@
 inputs:
   location: "http://localhost:9000"
   key: "clowder_key"
-  file_path: "full-path/pygeotemporal_parsers/"
+  file_path: "full-path/pygeostreams_parsers/"
   aggregate: "parse/aggregate"
   aggregate_header: "parse/aggrHeader"
   aggregate_file_type: ".csv"
