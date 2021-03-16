@@ -1,0 +1,34 @@
+host: https://<host>/geostreams
+username: <username for geostreams>
+password: <password for geostreams>
+
+log_filename: /home/parsers/parsers/gltg-dev/log-gltg-dev.log
+
+binning_path: /home/parsers/binning/binning_args.py
+# Add sleep in seconds for each binning thread for systems with less resources
+binning_wait: 0
+# Use lower number of threads for systems with less resources
+n_binning_threads: 4
+
+new_sensor_start_time: '2010'
+
+ilnlrs_sites:
+  - WQS0010
+  - WQS0020
+  - WQS0023
+  - WQS0025
+  - WQS0026
+
+map_parameters:
+    nitrate_con-iwqis: nitrate-nitrite-as-n-mgl
+    discharge-iwqis: discharge-ft3s
+    diss_oxy_con-iwqis: dissolved-oxygen-mgl
+    turbi_mean-iwqis: water-turbidity-ntu
+    temp_water-iwqis: water-temperature-c
+    ph-iwqis: pH
+    spec_cond-iwqis: specific-conductivity-uscm
+    load-iwqis: nitrate-load-lb-day
+    yield-iwqis: nitrate-yield-lb-acre-day
+    phosphate_con-iwqis: phosphorus-in-total-orthophosphate-as-p-mgl
+    p_yield-iwqis: phosphate-yield-lb-acre-day
+    p_load-iwqis: phosphate-load-lb-day
