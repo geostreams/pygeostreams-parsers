@@ -18,13 +18,13 @@ import argparse
 from datetime import datetime
 
 # Package Imports
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
 from pyclowder.datasets import get_file_list
 
 # Module Imports
-from pygeotemporal_parsers.sensors.create_sensors_and_streams \
+from pygeostreams_parsers.sensors.create_sensors_and_streams \
     import create_sensors_and_streams
 from parse_new_datapoints import parse_data, update_sensors_stats
 from get_new_files import filter_files

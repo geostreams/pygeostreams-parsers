@@ -4,9 +4,9 @@ import csv
 import os
 import dateutil.parser
 import argparse
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
 from pyclowder.datasets import DatasetsApi
 from pyclowder.collections import CollectionsApi
 

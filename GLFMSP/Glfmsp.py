@@ -6,9 +6,9 @@ import os
 
 import xlrd
 from pyclowder.datasets import DatasetsApi
-from pygeotemporal.datapoints import DatapointsApi
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
 
 # mappings from name used in file to id
 mappings = {

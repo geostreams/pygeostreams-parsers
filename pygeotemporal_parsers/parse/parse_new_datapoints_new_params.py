@@ -12,9 +12,9 @@ import yaml
 import argparse
 import csv
 from datetime import datetime
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
 
 
 def main():

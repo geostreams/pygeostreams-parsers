@@ -111,33 +111,33 @@ Scripts with their Descriptions:
 
 Config Files:
 * All files are located in the `config` folder
-* `pygeotemporal_parsers/config/combo_multi_config.yml`
-* `pygeotemporal_parsers/config/combo_multi_config_params.yml`
-* `pygeotemporal_parsers/config/create_daily_file_config.yml`
-* `pygeotemporal_parsers/config/hourly_parse_config.yml`
-* `pygeotemporal_parsers/config/multi_config.yml`
-* `pygeotemporal_parsers/config/multi_config_json_to_csv.yml`
-* `pygeotemporal_parsers/config/new_file_config.yml`
+* `pygeostreams_parsers/config/combo_multi_config.yml`
+* `pygeostreams_parsers/config/combo_multi_config_params.yml`
+* `pygeostreams_parsers/config/create_daily_file_config.yml`
+* `pygeostreams_parsers/config/hourly_parse_config.yml`
+* `pygeostreams_parsers/config/multi_config.yml`
+* `pygeostreams_parsers/config/multi_config_json_to_csv.yml`
+* `pygeostreams_parsers/config/new_file_config.yml`
 
 Parse Scripts:
 * All scripts are located in the `parse` folder
-* `pygeotemporal_parsers/parse/concat_files.py`
-* `pygeotemporal_parsers/parse/convert_json_to_csv.py`
-* `pygeotemporal_parsers/parse/convert_xls_to_csv.py`
-* `pygeotemporal_parsers/parse/create_new_daily_file.py`
-* `pygeotemporal_parsers/parse/get_concat_parse_upload.py`
-* `pygeotemporal_parsers/parse/get_convert_concat_parse_upload.py`
-* `pygeotemporal_parsers/parse/get_convert_concat_rename_parse_upload.py`
-* `pygeotemporal_parsers/parse/get_new_files.py`
-* `pygeotemporal_parsers/parse/parse_and_upload_newest_file.py`
-* `pygeotemporal_parsers/parse/parse_new_datapoints.py`
-* `pygeotemporal_parsers/parse/parse_new_datapoints_new_params.py`
-* `pygeotemporal_parsers/parse/parse_new_hourly_datapoints.py`
+* `pygeostreams_parsers/parse/concat_files.py`
+* `pygeostreams_parsers/parse/convert_json_to_csv.py`
+* `pygeostreams_parsers/parse/convert_xls_to_csv.py`
+* `pygeostreams_parsers/parse/create_new_daily_file.py`
+* `pygeostreams_parsers/parse/get_concat_parse_upload.py`
+* `pygeostreams_parsers/parse/get_convert_concat_parse_upload.py`
+* `pygeostreams_parsers/parse/get_convert_concat_rename_parse_upload.py`
+* `pygeostreams_parsers/parse/get_new_files.py`
+* `pygeostreams_parsers/parse/parse_and_upload_newest_file.py`
+* `pygeostreams_parsers/parse/parse_new_datapoints.py`
+* `pygeostreams_parsers/parse/parse_new_datapoints_new_params.py`
+* `pygeostreams_parsers/parse/parse_new_hourly_datapoints.py`
 
 Sensors Scripts:
 * All scripts are located in the `sensors` folder
-* `pygeotemporal_parsers/sensors/create_sensors_and_streams.py`
-* `pygeotemporal_parsers/sensors/delete_sensors_and_streams.py`
+* `pygeostreams_parsers/sensors/create_sensors_and_streams.py`
+* `pygeostreams_parsers/sensors/delete_sensors_and_streams.py`
 
 <a name="setup"></a>
 ## Setting Up for Usage
@@ -231,7 +231,7 @@ inputs:                                         # General Inputs:
   key: "clowder_key"                            #   Clowder Key
   user: "clowder_username"                      #   Clowder Username
   password: "clowder_password"                  #   Clowder Password
-  file_path: "full-path/pygeotemporal_parsers/" #   Full file path to the pygeotemporal_parsers Directory
+  file_path: "full-path/pygeostreams_parsers/" #   Full file path to the pygeostreams_parsers Directory
   timestamp: "timestamp"                        #   Keyword for the Time Column in the Raw Data files (RDF)
   headers: 4                                    #   Number of Header Rows in the Raw Data Files
   verify: "unique"                              #   Unique item in the Header shared for all associated RDF
@@ -298,7 +298,7 @@ inputs:                                         # General Inputs:
   key: "clowder_key"                            #   Clowder Key
   user: "clowder_username"                      #   Clowder Username
   password: "clowder_password"                  #   Clowder Password
-  file_path: "full-path/pygeotemporal_parsers/" #   Full file path to the pygeotemporal_parsers Directory
+  file_path: "full-path/pygeostreams_parsers/" #   Full file path to the pygeostreams_parsers Directory
   timestamp: "timestamp"                        #   Keyword for the Time Column in the Raw Data files (RDF)
   headers: 4                                    #   Number of Header Rows in the Raw Data Files
   verify: "unique"                              #   Unique item in the Header shared for all associated RDF
@@ -364,7 +364,7 @@ inputs:                                         # General Inputs:
   key: "clowder_key"                            #   Clowder Key
   user: "clowder_username"                      #   Clowder Username
   password: "clowder_password"                  #   Clowder Password
-  file_path: "full-path/pygeotemporal_parsers/" #   Full file path to the pygeotemporal_parsers Directory
+  file_path: "full-path/pygeostreams_parsers/" #   Full file path to the pygeostreams_parsers Directory
   timestamp: "timestamp"                        #   Keyword for the Time Column in the Raw Data files (RDF)
   headers: 4                                    #   Number of Header Rows in the Raw Data Files
   verify: "unique"                              #   Unique item in the Header shared for all associated RDF

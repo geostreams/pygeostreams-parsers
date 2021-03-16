@@ -10,10 +10,10 @@ from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 from datetime import date, datetime
 
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
-from pygeotemporal.time_transformers import time2utc
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
+from pygeostreams.time_transformers import time2utc
 
 # get configuration
 config = yaml.load(open("config.yml", 'r'))

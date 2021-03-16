@@ -1,7 +1,7 @@
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
-from pygeotemporal.cache import CacheApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
+from pygeostreams.cache import CacheApi
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
