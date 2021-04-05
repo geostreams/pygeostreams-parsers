@@ -3,7 +3,7 @@ inputs:
   key: "clowder_key"
   user: "clowder_username"
   password: "clowder_password"
-  file_path: "full-path/pygeotemporal_parsers/"
+  file_path: "full-path/pygeostreams_parsers/"
   timestamp: "timestamp"
   headers: 4
   verify: "unique"
@@ -39,11 +39,6 @@ parameters:
   def: "Instrument Name 01"
   ghi: "Instrument Name 02"
   jkl: "Instrument Name 02"
-parameters_updated:
-  abc: "New-Name-01"
-  def: "New-Name-01"
-  ghi: "New-Name-02"
-  jkl: "New-Name-02"
 sensors:
   - "Instrument Name 01"
   - "Instrument Name 02"

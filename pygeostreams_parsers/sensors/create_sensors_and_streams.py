@@ -3,8 +3,8 @@
 
 import argparse
 import yaml
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
 
 
 def main():

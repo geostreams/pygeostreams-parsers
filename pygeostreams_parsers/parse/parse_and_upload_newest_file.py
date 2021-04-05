@@ -28,13 +28,13 @@ from pyclowder.collections import CollectionsApi, get_datasets,\
     create_empty as create_empty_collection
 from pyclowder.datasets import create_empty as create_empty_dataset, \
     get_file_list as file_list_dataset
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
 
 # Module Imports
 from parse_new_datapoints import parse_data, update_sensors_stats
-from pygeotemporal_parsers.sensors.create_sensors_and_streams \
+from pygeostreams_parsers.sensors.create_sensors_and_streams \
     import create_sensors_and_streams
 
 

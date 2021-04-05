@@ -7,7 +7,6 @@
         - Concat the new files and create a parsing file
         - Create Sensors and Streams if they do not exist
         - Parse the new Data
-        - Use New Parameter Names
         - Update the Sensors Stats
         - Upload newest Aggregate to the correct location
 """
@@ -19,15 +18,15 @@ import argparse
 from datetime import datetime
 
 # Package Imports
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
 from pyclowder.datasets import get_file_list
 
 # Module Imports
-from pygeotemporal_parsers.sensors.create_sensors_and_streams \
+from pygeostreams_parsers.sensors.create_sensors_and_streams \
     import create_sensors_and_streams
-from parse_new_datapoints_new_params import parse_data, update_sensors_stats
+from parse_new_datapoints import parse_data, update_sensors_stats
 from get_new_files import filter_files
 from concat_files import create_header, concat_files
 from parse_and_upload_newest_file import upload_file
@@ -69,7 +68,6 @@ def main():
     verify_header = multi_config['inputs']['verify']
     timestamp = multi_config['inputs']['timestamp']
     parameters = multi_config['parameters']
-    parameters_updated = multi_config['parameters_updated']
     sensor_names = multi_config['sensors']
     total_header_rows = int(multi_config['inputs']['headers'])
     sensor_names_create = multi_config['sensorscreate']
@@ -178,8 +176,8 @@ def main():
     # Parse Data
     print("Will parse data. ")
     parse_file = open(parse_file_name, 'r')
-    parse_data(timestamp, config, sensor_names, parameters, parameters_updated,
-               parse_file, sensor_client, stream_client, datapoint_client)
+    parse_data(timestamp, config, sensor_names, parameters, parse_file,
+               sensor_client, stream_client, datapoint_client)
 
     # Update the sensors
     print("Will update sensor stats. ")

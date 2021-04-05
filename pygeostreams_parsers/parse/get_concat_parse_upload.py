@@ -2,13 +2,13 @@
     * Parse and Upload the Newest Locally-Present Data File *
 
     This Script will do the following:
-        - Get the files for parsing
-        - Convert XLS files to CSV files
+        - Get the files for parsing 
         - Concat the new files and create a parsing file
         - Create Sensors and Streams if they do not exist
         - Parse the new Data
         - Update the Sensors Stats
         - Upload newest Aggregate to the correct location
+
 """
 
 # Python Imports
@@ -18,19 +18,18 @@ import argparse
 from datetime import datetime
 
 # Package Imports
-from pygeotemporal.sensors import SensorsApi
-from pygeotemporal.streams import StreamsApi
-from pygeotemporal.datapoints import DatapointsApi
+from pygeostreams.sensors import SensorsApi
+from pygeostreams.streams import StreamsApi
+from pygeostreams.datapoints import DatapointsApi
 from pyclowder.datasets import get_file_list
 
 # Module Imports
-from pygeotemporal_parsers.sensors.create_sensors_and_streams \
+from pygeostreams_parsers.sensors.create_sensors_and_streams \
     import create_sensors_and_streams
 from parse_new_datapoints import parse_data, update_sensors_stats
 from get_new_files import filter_files
 from concat_files import create_header, concat_files
 from parse_and_upload_newest_file import upload_file
-from convert_xls_to_csv import convert_files
 
 
 def main():
@@ -114,14 +113,6 @@ def main():
 
     # GET NEW FILES end #
 
-    # CONVERT FILES start #
-
-    # Convert File
-    print("Converting XLS Files to CSV Files. ")
-    convert_files(local_path, new_files, downloads)
-
-    # CONVERT FILES end #
-
     # CONCAT FILES start #
 
     print "INFO: file to write is: " + str(concat_file_name)
@@ -202,6 +193,7 @@ def main():
     # UPLOAD NEW AGGREGATE FILE end #
 
     print("Processing Complete. ")
+
 
 if __name__ == '__main__':
     try:

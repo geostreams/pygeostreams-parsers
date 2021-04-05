@@ -1,5 +1,5 @@
 inputs:
-  file_path: "full-path/pygeotemporal_parsers/"
+  file_path: "full-path/pygeostreams_parsers/"
   json_file: "path/from/file_path/to/JSONDATA.json"
   conv_file: "path/from/file_path/to/NEWFILE.csv"
   params_id: "parameter_column_name"
