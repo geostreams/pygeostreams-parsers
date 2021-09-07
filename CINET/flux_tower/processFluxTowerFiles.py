@@ -267,12 +267,12 @@ def process_new_data(src, multi_config, last_processed):
 
 
 def main():
-  # Import DAT file to Clowder, creating an annual aggregate when necessary
-  src = 
-  log = "LastProcessed__FluxTower_flux.log"
-
   # Pull geostreams configuration from config YML
   multi_config = yaml.load(open("flux_tower_config.yml", 'r'))
+
+  # Import DAT file to Clowder, creating an annual aggregate when necessary
+  src = multi_config['sourcefile']['input']
+  log = "LastProcessed__FluxTower_flux.log"
 
   # Check logfile for last read line (for datapoints) - if none found, will start at top of datfile
   last_processed = None
