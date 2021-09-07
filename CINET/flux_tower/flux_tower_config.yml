@@ -1,0 +1,228 @@
+inputs:
+  location: "http://localhost:9000"
+  key: "clowder_key"
+  user: "clowder_username"
+  password: "clowder_password"
+  timestamp: "TIMESTAMP"
+  sourcefile: "/var/opt/CampbellSci/LoggerNet/FluxTower_flux.dat"
+config:
+  dataset_source_id: "DatasetID"
+  sensor:
+      geometry:
+          type": Point
+          coordinates: [-88.55511111, 40.15569444, 0]
+      properties:
+          region: "Illinois"
+          type:
+              id: "imlczo"
+              title: "IMLCZO"
+              location: "flux-tower"
+              network: ""
+          elevation:
+              mean_sea_level: 0
+              offset: 0
+              offset_units: "meters"
+          name: ""
+          popupContent: ""
+          huc: ""
+parameters:
+  u_star: 
+    sensor_name: "CSAT3 Sonic Anemometer"
+    qc_method: "3stdev"
+  rslt_wnd_spd:
+    sensor_name: "CSAT3 Sonic Anemometer"
+    qc_method: "3stdev"
+  wnd_dir_compass:
+    sensor_name: "CSAT3 Sonic Anemometer"
+    qc_method: "3stdev"
+  Fc_li_wpl:
+    sensor_name: "Li7500"
+    qc_method: "3stdev-daynight"
+  LE_li_wpl:
+    sensor_name: "Li7500"
+    qc_method: "3stdev-daynight"
+  Hc_li:
+    sensor_name: "Li7500"
+    qc_method: "3stdev-daynight"
+  CO2_li_mean:
+    sensor_name: "Li7500"
+    qc_method: "3stdev-daynight"
+  H2O_li_mean:
+    sensor_name: "Li7500"
+    qc_method: "3stdev-daynight"
+  amb_press_li_mean:
+    sensor_name: "Li7500"
+    qc_method: "3stdev-daynight"
+  rho_a_li_mean:
+    sensor_name: "Li7500"
+    qc_method: "3stdev-daynight"
+  Precip_Tot:
+    sensor_name: "TE525-L rain gauge"
+    qc_method: "3stdev-daynight"
+  T_tmpr_rh_mean:
+    sensor_name: "083E Temp and RH"
+    qc_method: "3stdev-daynight"
+  e_tmpr_rh_mean:
+    sensor_name: "083E Temp and RH"
+    qc_method: "3stdev-daynight"
+  e_sat_tmpr_rh_mean:
+    sensor_name: "083E Temp and RH"
+    qc_method: "3stdev-daynight"
+  H2O_tmpr_rh_mean:
+    sensor_name: "083E Temp and RH"
+    qc_method: "3stdev-daynight"
+  RH_tmpr_rh_mean:
+    sensor_name: "083E Temp and RH"
+    qc_method: "3stdev-daynight"
+  CS655_Wcr_Avg:
+    sensor_name: "CS655-L50 Reflectometer"
+    qc_method: "3stdev-daynight"
+  CS655_Ec_Avg:
+    sensor_name: "CS655-L50 Reflectometer"
+    qc_method: "3stdev-daynight"
+  CS655_Tmpr_Avg:
+    sensor_name: "CS655-L50 Reflectometer"
+    qc_method: "3stdev-daynight"
+  NDVI_Avg:
+    sensor_name: "SRS NDVI (a:fieldstop): Nr"
+    qc_method: "3stdev-daynight"
+  PRI_Avg:
+    sensor_name: "SRS PRI (a:fieldstop): Pr"
+    qc_method: "3stdev-daynight"
+  D5TE_VWC_5cm_Avg:
+    sensor_name: "5TE Soil Probe 5cm"
+    qc_method: "3stdev-daynight"
+  D5TE_EC_5cm_Avg:
+    sensor_name: "5TE Soil Probe 5cm"
+    qc_method: "3stdev-daynight"
+  D5TE_T_5cm_Avg:
+    sensor_name: "5TE Soil Probe 5cm"
+    qc_method: "3stdev-daynight"
+  D5TE_VWC_15cm_Avg:
+    sensor_name: "5TE Soil Probe 15cm"
+    qc_method: "3stdev-daynight"
+  D5TE_EC_15cm_Avg:
+    sensor_name: "5TE Soil Probe 15cm"
+    qc_method: "3stdev-daynight"
+  D5TE_T_15cm_Avg:
+    sensor_name: "5TE Soil Probe 15cm"
+    qc_method: "3stdev-daynight"
+  D5TE_VWC_30cm_Avg:
+    sensor_name: "5TE Soil Probe 30 cm"
+    qc_method: "3stdev-daynight"
+  D5TE_EC_30cm_Avg:
+    sensor_name: "5TE Soil Probe 30 cm"
+    qc_method: "3stdev-daynight"
+  D5TE_T_30cm_Avg:
+    sensor_name: "5TE Soil Probe 30 cm"
+    qc_method: "3stdev-daynight"
+  D5TE_VWC_50cm_Avg:
+    sensor_name: "5TE Soil Probe 50 cm"
+    qc_method: "3stdev-daynight"
+  D5TE_EC_50cm_Avg:
+    sensor_name: "5TE Soil Probe 50 cm"
+    qc_method: "3stdev-daynight"
+  D5TE_T_50cm_Avg:
+    sensor_name: "5TE Soil Probe 50 cm"
+    qc_method: "3stdev-daynight"
+  D5TE_VWC_100cm_Avg:
+    sensor_name: "5TE Soil Probe 100cm"
+    qc_method: "3stdev-daynight"
+  D5TE_EC_100cm_Avg:
+    sensor_name: "5TE Soil Probe 100cm"
+    qc_method: "3stdev-daynight"
+  D5TE_T_100cm_Avg:
+    sensor_name: "5TE Soil Probe 100cm"
+    qc_method: "3stdev-daynight"
+  D5TE_VWC_200cm_Avg:
+    sensor_name: "5TE Soil Probe 200cm"
+    qc_method: "3stdev-daynight"
+  D5TE_EC_200cm_Avg:
+    sensor_name: "5TE Soil Probe 200cm"
+    qc_method: "3stdev-daynight"
+  D5TE_T_200cm_Avg:
+    sensor_name: "5TE Soil Probe 200cm"
+    qc_method: "3stdev-daynight"
+  Targ121TempC_Avg:
+    sensor_name: "SI-121 Infrared Radiometer"
+    qc_method: "3stdev-daynight"
+  Targ1H1TempC_Avg:
+    sensor_name: "SI-1H1 Infrared Radiometer"
+    qc_method: "3stdev-daynight"
+  short_up_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  short_dn_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  long_up_corr_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  long_dn_corr_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  Rs_net_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  Rl_net_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  albedo_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  Rn_Avg:
+    sensor_name: "CMR4 Pyranometer (Kipp&Zonen)"
+    qc_method: "3stdev-daynight"
+  SQ_110_Avg:
+    sensor_name: "Campbell LI190SB-L (PAR)"
+    qc_method: "3stdev-daynight"
+  shf_Avg(1):
+    sensor_name: "HFP01SC-L50 (2 heat flux plates)"
+    qc_method: "3stdev-daynight"
+  shf_Avg(2):
+    sensor_name: "HFP01SC-L50 (2 heat flux plates)"
+    qc_method: "3stdev-daynight"
+  DS2_WindSpeed_Max:
+    sensor_name: "DS2 Sonic Anemometer"
+    qc_method: "3stdev-daynight"
+  DS2_WindSpeed_Avg:
+    sensor_name: "DS2 Sonic Anemometer"
+    qc_method: "3stdev-daynight"
+  DS2_WindDir_Avg:
+    sensor_name: "DS2 Sonic Anemometer"
+    qc_method: "3stdev-daynight"
+  DS2_Temp_Avg:
+    sensor_name: "DS2 Sonic Anemometer"
+    qc_method: "3stdev-daynight"
+  mean_wind_speed:
+    sensor_name: "Windsonic4"
+    qc_method: "3stdev-daynight"
+  mean_wind_direction:
+    sensor_name: "Windsonic4"
+    qc_method: "3stdev-daynight"
+  std_wind_dir:
+    sensor_name: "Windsonic4"
+    qc_method: "3stdev-daynight"
+sensors:
+  - "Li7500"
+  - "CSAT3 Sonic Anemometer"
+  - "083E Temp and RH"
+  - "DS2 Sonic Anemometer"
+  - "SRS NDVI (a:fieldstop): Nr"
+  - "SRS NDVI (b: hemispherical): Ni"
+  - "SRS PRI (a:fieldstop): Pr"
+  - "SRS PRI (b: hemispherical): Pi"
+  - "TE525-L rain gauge"
+  - "SI-1H1 Infrared Radiometer"
+  - "CMR4 Pyranometer (Kipp&Zonen)"
+  - "SI-121 Infrared Radiometer"
+  - "Campbell LI190SB-L (PAR)"
+  - "5TE Soil Probe 5cm"
+  - "5TE Soil Probe 15cm"
+  - "5TE Soil Probe 30 cm"
+  - "5TE Soil Probe 50 cm"
+  - "5TE Soil Probe 100cm"
+  - "5TE Soil Probe 200cm"
+  - "CS655-L50 Reflectometer"
+  - "HFP01SC-L50 (2 heat flux plates)"
+  - "Windsonic4"
