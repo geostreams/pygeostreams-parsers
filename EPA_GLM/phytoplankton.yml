@@ -1,8 +1,8 @@
 inputs:
   location: "https://141.142.211.239/geostreams"
-  user: "aarajh@illinois.edu"
+  user: ""
   password: ""
-  file_path: "/Users/aarajh/pygeotemporal-parsers/EPA_GLM/"
+  file_path: "/Users/aarajh/geostreams/pygeotemporal-parsers/EPA_GLM/"
   file_type: ".csv"
   parse: "phytoplankton.csv"
   timestamp: "START_DATE_TIME"

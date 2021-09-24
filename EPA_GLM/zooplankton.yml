@@ -1,6 +1,6 @@
 inputs:
   location: "http://141.142.211.239/geostreams"
-  user: "aarajh@illinois.edu"
+  user: ""
   password: ""
   file_path: "/Users/aarajh/pygeotemporal-parsers/EPA_GLM/"
   timestamp: "SAMPLE DATE"
