@@ -1,0 +1,60 @@
+connection:
+  url: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/SoilMoisture.Reifsteck.2020.csv"
+  headers: 1
+  datetime_format: '%m/%d/%y %H:%M'
+  column_mappings:
+    timestamp: TIMESTAMP
+    value:
+      5cm : VWC_5cmP0
+      10cm: VWC_10cmP0
+      20cm: VWC_20cmP0
+      30cm: VWC_30cmP0
+      40cm: VWC_40cmP0
+      50cm: VWC_50cmP0
+      60cm: VWC_60cmP0
+      75cm: VWC_75cmP0
+      100cm: VWC_100cmP0
+
+config:
+  parameter: soil-moisture
+  sanitize: true
+  sensor_name: "Reifsteck"
+
+
+new_parameters:
+    soil-moisture:
+      title: Soil Moisture
+      categories:
+        - name: Soil Moisture
+          detail_type: stacked-bar
+      unit: vwc
+      scale_names:
+        - 5cm
+        - 10cm
+        - 20cm
+        - 30cm
+        - 40cm
+        - 50cm
+        - 60cm
+        - 75cm
+        - 100cm
+      scale_colors:
+        - '#396AB1'
+        - '#DA7C30'
+        - '#3E9651'
+        - '#CC2529'
+        - '#535154'
+        - '#6B4C9A'
+        - '#922428'
+        - '#948B3D'
+        - '#3ca399'
+
+
+curl -X POST -H 'Content-Encoding: application/json' -H 'x-auth-token:5bd553dfdbb01b2b4622796a27c3b3eca16a8fbe226448da45d9def06befcdf7b4c751664783da5d7953c2dabfae4709b21eeb78cc3b32fe8765a016c84c5cf574b6a287729bc2159735af8ad9e440fe2db09a978f36988af15728b7f658c08d01921af96cd8f4b0830b2a91ed34a9e82c5bfb074455ab3fba3fd621d79fe63d' --compressed 'http://localhost:9000/geostreams/api/cache'

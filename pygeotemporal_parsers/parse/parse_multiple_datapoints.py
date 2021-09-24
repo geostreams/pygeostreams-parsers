@@ -1,15 +1,17 @@
 """
-    Parse datapoints from a CSV file containing datapoints associated with multiple sensors
-    but for a single parameter.
+     Parse CSV Files for datapoints associated with one sensor but with multiple parameters
 
     
-    python parse_datapoints_multi_sensors.py -c /Users/aarajh/pygeotemporal-parsers/EPA_GLM/phytoplankton.yaml
+    python parse_datapoints_multi_sensors.py -c /pygeotemporal-parsers/SMARTFARM/data-config/flux_tower.yml
 """
 
 import os
 import sys
+import time
+import copy
 import yaml
 import argparse
+import csv
 import pandas as pd
 from datetime import datetime
 from pygeotemporal.sensors import SensorsApi
@@ -17,7 +19,9 @@ from pygeotemporal.streams import StreamsApi
 from pygeotemporal.datapoints import DatapointsApi
 from pygeotemporal.client import GeostreamsClient
 from pygeotemporal.cache import CacheApi
-
+from datetime import date,datetime
+import requests
+import logging
 
 def main():
     """Main Function"""
@@ -39,6 +43,11 @@ def main():
     file_params = params['file']
     config = params['config']
     column_mappings = params['file']['column_mappings']
+    if 'ignore_columns' not in file_params:
+        ignore_columns = []
+    else:
+        ignore_columns = file_params['ignore_columns']
+
 
     if not os.path.exists(file_params['path']):
         print("Missing File to Parse.")
@@ -54,46 +63,42 @@ def main():
         print("Unable to connect to geostreams api")
         return
 
+    
 
+    date_parser = lambda d: pd.to_datetime(d, errors='coerce')
     raw_data = pd.read_csv(file_params['path'], 
                             parse_dates=[column_mappings['timestamp']], 
                             infer_datetime_format= True,
-                            usecols= lambda x: x not in file_params['ignore_columns'], 
+                            date_parser=date_parser,
+                            usecols= lambda x: x not in ignore_columns, 
                         )
+    raw_data.dropna(how='all', axis=1, inplace=True)
 
-    raw_data.rename({
-                        column_mappings['sensor']:'sensor',
-                        column_mappings['timestamp']:'timestamp',
-                        column_mappings['value']:'value'
-                    }, 
+    raw_data.rename(dict((v,k) for k,v in column_mappings.items()), 
                     axis="columns", 
-                    inplace=True
-                    )
+                    inplace=True)
+
     ## Preprocess data
     if(config['sanitize']):
         raw_data.dropna(inplace=True)
 
-    # Remove data points for sensors in skip_sensors list if provided
-    if 'skip_sensors' in config:
-        skip_sensors = config['skip_sensors']
-        raw_data = raw_data[~raw_data[sensor].isin(skip_sensors)]
-
-    sensors = raw_data['sensor'].unique()
+    sensors = [config['sensor_name']]
 
     print("Getting sensor/stream data from geostreams-api. ")
     sensors_data, streams_data = get_sensor_streams(sensors, 
                                                     sensor_client, 
                                                     stream_client)
 
+
     #  Parse Data
     print("Parsing Datafile: " + str(os.path.basename(file_params['path'])))
     parse_data(raw_data, sensors_data, streams_data, config,datapoint_client)
 
     # ## Update the sensors
-    # print("Will update sensor stats. ")
+    print("Will update sensor stats. ")
     update_sensors_stats(sensor_client, sensors)
 
-    # print("Done!")
+    print("Done!")
 
 def get_sensor_streams(sensor_list, sensor_client, stream_client):
     sensors_data = {}
@@ -154,13 +159,19 @@ def parse_data(raw_data, sensors_data, streams_data, config, datapoint_client):
 
     for index, data in raw_data.iterrows():
         date = data['timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
-        sensor_name = data['sensor']
+        sensor_name = config['sensor_name']
         stream_id = streams_data[sensor_name]['id']
         sensor_id = sensors_data[sensor_name]['id']
         properties = {}
         # Get the Data Value for each parameter
-        properties[config['parameter']]= data['value']
-        print(properties)
+        parameters = config['parameters']
+        for x in parameters:
+            data_value = data[x]
+            if data_value != '':
+                properties[x] = data_value
+            else:
+                if printout is True:
+                    print("Data Field is blank - Not Parsing")   
         datapoint = {
                 'start_time': date,
                 'end_time': date,

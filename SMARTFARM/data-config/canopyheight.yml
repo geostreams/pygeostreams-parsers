@@ -1,0 +1,19 @@
+connection:
+  url: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/CanopyHeight.Reifsteck.2020.csv"
+  headers: 1
+  column_mappings:
+    timestamp: Date
+    value:
+      canopy-height:
+        value: Value
+        error: Uncertainty (m)
+
+config:
+  sanitize: true
+  sensor_name: "Reifsteck"

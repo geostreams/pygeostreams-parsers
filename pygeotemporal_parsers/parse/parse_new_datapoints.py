@@ -13,6 +13,9 @@ from datetime import datetime
 from pygeotemporal.sensors import SensorsApi
 from pygeotemporal.streams import StreamsApi
 from pygeotemporal.datapoints import DatapointsApi
+import requests
+import logging
+
 
 
 def main():
@@ -26,7 +29,7 @@ def main():
                     required=True)
     ap.add_argument('-p', "--printout",
                     help="Print Non-Error Messages to the Screen",
-                    default=r'False',
+                    default=r'True',
                     required=False)
     opts = ap.parse_args()
     if not opts.config:
@@ -37,21 +40,20 @@ def main():
     if opts.printout:
         printout = eval(opts.printout)
     else:
-        printout = False
+        printout = True
 
     multi_config = yaml.load(open(opts.config, 'r'))
 
     url = multi_config['inputs']['location']
     user = multi_config['inputs']['user']
     password = multi_config['inputs']['password']
-    key = multi_config['inputs']['key']
     local_path = multi_config['inputs']['file_path']
     datafile_file = str(local_path) + multi_config['inputs']['parse']
     timestamp = multi_config['inputs']['timestamp']
     parameters = multi_config['parameters']
     sensor_names = multi_config['sensors']
     config = multi_config['config']
-
+    print(datafile_file)
     if os.path.exists(datafile_file):
         datafile = open(datafile_file, 'r')
     else:
@@ -91,7 +93,8 @@ def update_sensors_stats(sensor_client, sensor_names, printout=False):
             sensor = sensor[0]
             sensor_id = sensor['id']
             if printout is True:
-                print("Sensor found. Updating " + sensor_id)
+                print("Sensor found. Updating " + str(sensor_id))
+            print(sensor_id)
             sensor_client.sensor_statistics_post(sensor_id)
         else:
             print("Sensor not found " + sensor_name)
@@ -137,6 +140,8 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
         parse_stream = stream_raw['streams'][0]
         stream_id = parse_stream['id']
 
+        print(all_data)
+
         # Create Datapoints for each date for this Sensor Name
         for row in range(len(all_data)):
 
@@ -144,12 +149,12 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
             raw_date = all_data[row][timestamp]
             if '/' in raw_date:
                 sensor_date_raw = (
-                    datetime.strptime(raw_date, '%m/%d/%Y %H:%M:%S %p'))
+                    datetime.strptime(raw_date, '%m/%d/%Y%p'))
                 sensor_timestamp = time.mktime(sensor_date_raw.timetuple())
                 sensor_date = (datetime.utcfromtimestamp(sensor_timestamp)
                                .strftime('%Y-%m-%dT%H:%M:%SZ'))
             else:
-                sensor_date = (datetime.strptime(raw_date,'%Y-%m-%d %H:%M:%S')
+                sensor_date = (datetime.strptime(raw_date,'%Y-%m-%d')
                                .strftime('%Y-%m-%dT%H:%M:%SZ'))
             # Start Date == End Date
             start_time = sensor_date
@@ -159,6 +164,7 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
             for x in parameters:
                 if x in csv_keys and parameters[x] == sensor_name:
                     data_value = all_data[row][x]
+                    print("Val"+data_value)
                     # Set Sensor Name Column Data
                     if data_value != '':
                         properties[x] = data_value

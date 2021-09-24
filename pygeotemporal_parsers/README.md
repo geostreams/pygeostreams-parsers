@@ -105,13 +105,22 @@ Scripts with their Descriptions:
     * Parse the new Data via `parse_new_datapoints.py`
     * Update the Sensors Stats via `parse_new_datapoints.py`
     * It is intended for this script to be utilized once per hour each day
-* `parse_datapoints_multi_sensor.py`
+* `parse_nested_parameters.py`
     * Parse all new data points from the parsing file
     * Create streams with source name in them
     * Supports files with multiple sensor names
     * Supports parameters with nested objects (for stacked bar graphs)
     * Updates Sensor Statistics
-    * Created for GLM EPA Biology data file
+    * Created for Smartfarm
+* `parse_multiple_datapoints.py`
+    * Multiple Parameters , One Sensor
+    * Created for Smartfarm
+* `parse_multi_sensors_multi_points.py`
+    * Multiple Parameters, Multiple Sensors
+    * Created for Smartfarm
+* `parse_datapoints_multi_sensors.py`
+    * Single Parameter, Multiple Sensors
+    * Created for Smartfarm
 * `create_parameter_and_mapping.py`
     * Creates new paramaters based on the yaml file provided
     * Creates new category if needed and maps the parameter to the category

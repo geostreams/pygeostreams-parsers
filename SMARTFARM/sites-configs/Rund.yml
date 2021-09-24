@@ -1,0 +1,22 @@
+inputs:
+  location: "http://localhost:9000"
+  user: 
+  password: 
+
+    
+config:
+    sensor:
+        geometry:
+            type": Point
+            coordinates: [ -88.2221556,39.8956139, 0]
+        properties:
+            region: "Rund"
+            type:
+                id: "mbclab"
+                title: "MBC Lab"
+            name: "Rund - Cumulative"
+            popupContent: "Rund - Cumulative"
+
+
+sensorscreate:
+    - "Rund - Cumulative"

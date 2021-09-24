@@ -52,13 +52,12 @@ def create_sensors_and_streams(
             config['sensor']['geometry']['coordinates'][1],
             config['sensor']['geometry']['coordinates'][2],
             sensor_name,
-            config['sensor']['properties']['region'],
-            config['sensor']['properties']['huc'],
-            config['sensor']['properties']['type']['network'],
-            config['sensor']['properties']['type']['id'],
-            config['sensor']['properties']['type']['title']
+            region= config['sensor']['properties']['region'],
+            organization_id= config['sensor']['properties']['type']['id'],
+            title=config['sensor']['properties']['type']['title']
         )
         sensor = sensor_client.sensor_post_json(sensor_json)
+        print(sensor)
         print("Created Sensor " + str(sensor['id']))
 
         # Create the Stream

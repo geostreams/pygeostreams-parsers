@@ -1,0 +1,22 @@
+inputs:
+  location: "http://localhost:9000"
+  user:
+  password: 
+
+
+config:
+    sensor:
+        geometry:
+            type": Point
+            coordinates: [ -88.1544917,39.8838694, 0]
+        properties:
+            region: "Reinhart"
+            type:
+                id: "mbclab"
+                title: "MBC Lab"
+            name: "Reinhart - Cumulative"
+            popupContent: "Reinhart - Cumulative"
+
+
+sensorscreate:
+    - "Reinhart - Cumulative"

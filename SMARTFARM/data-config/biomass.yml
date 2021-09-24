@@ -1,0 +1,23 @@
+connection:
+  url: "http://localhost:9000"
+  user: ""
+  password: ""
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/Biomass.Reifsteck.V4.2020.csv"
+  file_type: ".csv"
+  column_mappings:
+    sensor: GPS ID
+    timestamp: Sampling date
+    value: Dry biomass (Mg/ha)
+    sample-id: Sample ID
+  ignore_columns: 
+    - Latitude
+    - Longitude
+  metadata:
+    - Sample ID
+
+config:
+  parameter: biomass
+  sanitize: true

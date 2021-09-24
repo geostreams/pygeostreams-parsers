@@ -9,6 +9,7 @@ from pygeotemporal.sensors import SensorsApi
 from pygeotemporal.streams import StreamsApi
 from pygeotemporal.client import GeostreamsClient
 from requests.exceptions import RequestException
+import pandas as pd
 import requests
 import logging
 
@@ -49,7 +50,9 @@ def main():
     host = multi_config['inputs']['location']
     user = multi_config['inputs']['user']
     password = multi_config['inputs']['password']
-    parameters = multi_config['new_parameters']
+    parameters_file = multi_config['new_parameters']
+
+    parameters = pd.read_csv(parameters_file)
     
     parameters_client = GeostreamsClient(host=host, username=user, password=password)
 
@@ -61,30 +64,19 @@ def create_parameters(parameters, parameters_client):
     """Create all sensors and streams"""
 
     print("Creating parameters...")
-    for key, value in parameters.items():
-        param_body = {'name': key}
-        categories_body = value.pop('categories')
-        # Set explore_view to false if not provided in yaml
-        if not 'explore_view' in value:
-            value['explore_view'] = True
-        # Set search_view to false if not provided in yaml
-        if not 'search_view' in value:
-            value['search_view']= True
-        if not 'scale_names' in value:
-            value['scale_names']= True
-        if not 'scale_colors' in value:
-            value['scale_colors']=True
-        param_body.update(value)
-
+    for index, data in parameters.iterrows():
+        param_body = {'name': data['name'], 'unit': data['unit'], 'explore_view': True, 'search_view': True, "scale_names": None, "scale_colors": None}
+        categories_body = {'name': data['category'], 'detail_type': data['detail_type']}
         post_data = {'parameter':param_body,'categories': categories_body}
         print(post_data)
         try:
-            param_id = json.loads(parameters_client.post("/parameters", post_data).text)['parameter']['id']
+            res = json.loads(parameters_client.post("/parameters", post_data).text)
+            print(res)
+            param_id = res['parameter']['id']
             print ("Parameter %s created [ID: %d]" % (key, param_id))
         except RequestException as e:
             logging.error(f"Error adding parameter {key}: {e}")
             raise e
-
     return
 
 

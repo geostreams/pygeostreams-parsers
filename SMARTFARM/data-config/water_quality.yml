@@ -1,0 +1,26 @@
+connection:
+  url: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/Waterquality.Reifsteck.2020.csv"
+  headers: 1
+  column_mappings:
+    sensor: 'GPS ID'
+    timestamp: Sampling date
+    water-quality-nh4: 'NH4(ppm)'
+    water-quality-no3: 'NO3(ppm)'
+    water-quality-po4: 'PO4(ppm)'
+  ignore_columns: 
+    - Latitude
+    - Longitude
+    - Sample ID
+
+config:
+  parameters:
+    - water-quality-nh4
+    - water-quality-no3
+    - water-quality-po4
+  sanitize: true

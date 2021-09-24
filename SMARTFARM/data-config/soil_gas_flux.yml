@@ -1,0 +1,29 @@
+connection:
+  url: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/SoilGasFlux.Reifsteck.2020.csv"
+  headers: 1
+  column_mappings:
+    timestamp: Sampling date
+    value: 
+      soil-gas-flux-n2o-flux: 
+        value: 'N2O flux (mg/m2/day)'
+        error: 'N2O standard error'
+      soil-gas-flux-co2-flux: 
+        value: 'CO2 flux (g/m2/day)'
+        error: CO2 standard error
+      soil-gas-flux-ch4-flux: 
+        value: CH4 flux (mg/m2/day)
+        error: CH4 standard error
+
+config:
+  parameters:
+    - soil-gas-flux-n2o-flux
+    - soil-gas-flux-co2-flux
+    - soil-gas-flux-ch4-flux
+  sensor_name: "Reifsteck"
+  sanitize: true

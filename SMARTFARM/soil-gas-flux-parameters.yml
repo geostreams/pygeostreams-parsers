@@ -1,0 +1,37 @@
+inputs:
+  location: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+new_parameters:
+      
+#  Parameter configs with errors
+    soil-gas-flux-n2o-flux:
+      title: Soil Gas Flux - N20 Flux
+      categories:
+       -  name: Soil Gas Flux
+          detail_type: stacked-line-with-error
+      unit: mg/m2/day
+      scale_names:
+        - value
+        - error
+    
+    soil-gas-flux-co2-flux:
+      title: Soil Gas Flux - CO2 Flux
+      categories:
+       -  name: Soil Gas Flux
+          detail_type: stacked-line-with-error
+      unit: g/m2/day
+      scale_names:
+        - value
+        - error
+
+    soil-gas-flux-ch4-flux:
+      title: Soil Gas Flux - CH4 Flux
+      categories:
+       -  name: Soil Gas Flux
+          detail_type: stacked-line-with-error
+      unit: mg/m2/day
+      scale_names:
+        - value
+        - error

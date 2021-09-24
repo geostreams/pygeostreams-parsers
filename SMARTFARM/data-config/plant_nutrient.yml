@@ -1,0 +1,51 @@
+inputs:
+  location: "http://localhost:9000"
+  user: 
+  password: 
+
+connection:
+  url: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/PlantNutrient.csv"
+  headers: 1
+  column_mappings:
+    sensor: 'GPS ID'
+    timestamp: Sampling date
+    plant-nutrient-nitrogen: 'Nitrogen (%)'
+    plant-nutrient-sulfur: 'Sulfur (%)'
+    plant-nutrient-phosphorus: 'Phosphorus (%)'
+    plant-nutrient-potassium: 'Photassium (%)'
+    plant-nutrient-magnesium: 'Magnesium (%)'
+    plant-nutrient-calcium: 'Calcium (%)'
+    plant-nutrient-sodium: 'Sodium (%)'
+    plant-nutrient-boron: Boron (ppm)
+    plant-nutrient-zinc: Zinc (ppm)
+    plant-nutrient-manganese: Manganese (ppm)
+    plant-nutrient-iron: Iron (ppm)
+    plant-nutrient-copper: Copper (ppm)
+    plant-nutrient-aluminum: Aluminum (ppm)
+  ignore_columns: 
+    - Latitude
+    - Longitude
+    - Sample ID
+
+config:
+  parameters:
+    - plant-nutrient-nitrogen
+    - plant-nutrient-sulfur
+    - plant-nutrient-phosphorus
+    - plant-nutrient-potassium
+    - plant-nutrient-magnesium
+    - plant-nutrient-calcium
+    - plant-nutrient-sodium
+    - plant-nutrient-boron
+    - plant-nutrient-zinc
+    - plant-nutrient-manganese
+    - plant-nutrient-iron
+    - plant-nutrient-copper
+    - plant-nutrient-aluminum
+  sanitize: true

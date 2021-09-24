@@ -1,0 +1,20 @@
+connection:
+  url: "http://localhost:9000"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/SamplingLocation.Reifsteck.2020.csv"
+  column_mappings:
+    sensor: GPS ID
+    latitude: Latitude
+    longitude: Longitude
+
+config:
+  sensor:
+    properties:
+      region: "Reifsteck"
+      type:
+        id: "subfield"
+        title: "Subfield Data"

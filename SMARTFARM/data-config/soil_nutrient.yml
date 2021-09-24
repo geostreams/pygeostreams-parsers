@@ -1,0 +1,62 @@
+connection:
+  url: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/SoilNutrient.Reifsteck.2020.csv"
+  headers: 1
+  column_mappings:
+    sensor: 'GPS ID'
+    timestamp: Sampling date
+    soil-nutrient-bulk-density: 'Bulk Density (g/cm3)'
+    soil-nutrient-organic-matter: 'Organic Matter (%)'
+    soil-nutrient-cation-exchange: 'Cation Exchange Capacity (meq/100g)'
+    soil-nutient-soil-ph: 'Soil pH'
+    soil-nutient-buffer-ph: 'Buffer pH'
+    soil-nutient-phosphorus: 'Phosphorus (ppm)'
+    soil-nutrient-pottasium: 'Pottasium (ppm)'
+    soil-nutrient-calcium: 'Calcium (ppm)'
+    soil-nutrient-magnesium: 'Magnesium (ppm)'
+    soil-nutrient-sulfur: 'Sulfur (ppm)'
+    soil-nutrient-sodium: 'Sodium (ppm)'
+    soil-nutrient-zinc: 'Zinc (ppm)'
+    soil-nutrient-manganese: 'Manganese (ppm)'
+    soil-nutrient-iron: 'Iron (ppm)'
+    soil-nutrient-copper: 'Copper (ppm)'
+    soil-nutrient-boron: 'Boron (ppm)'
+    soil-nutrient-k-saturation: '%K Saturation'
+    soil-nutrient-mg-saturation: '%Mg Saturation'
+    soil-nutrient-ca-saturation: '%Ca Saturation'
+    soil-nutrient-na-saturation: '%Na Saturation'
+    soil-nutrient-h-saturation: '%H Saturation'
+  ignore_columns: 
+    - Latitude
+    - Longitude
+    - Sample ID
+
+config:
+  parameters:
+    - soil-nutrient-bulk-density
+    - soil-nutrient-organic-matter
+    - soil-nutrient-cation-exchange
+    - soil-nutient-soil-ph
+    - soil-nutient-buffer-ph
+    - soil-nutient-phosphorus
+    - soil-nutrient-pottasium
+    - soil-nutrient-calcium
+    - soil-nutrient-magnesium
+    - soil-nutrient-sulfur
+    - soil-nutrient-sodium
+    - soil-nutrient-zinc
+    - soil-nutrient-manganese
+    - soil-nutrient-iron
+    - soil-nutrient-copper
+    - soil-nutrient-boron
+    - soil-nutrient-k-saturation
+    - soil-nutrient-mg-saturation
+    - soil-nutrient-ca-saturation
+    - soil-nutrient-na-saturation
+    - soil-nutrient-h-saturation
+  sanitize: true

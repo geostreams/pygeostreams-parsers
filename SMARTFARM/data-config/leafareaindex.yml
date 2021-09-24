@@ -1,0 +1,19 @@
+connection:
+  url: "http://localhost:9000/geostreams"
+  user:
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/LeafAreaIndex.Reifsteck.2020.csv"
+  headers: 1
+  column_mappings:
+    timestamp: Date
+    value:
+      leaf-area-index:
+        value: Value (m-2 m-2)
+        error: Uncertainty (m-2 m-2)
+
+config:
+  sanitize: true
+  sensor_name: "Reifsteck"

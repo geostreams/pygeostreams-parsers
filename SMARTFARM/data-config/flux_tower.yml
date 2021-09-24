@@ -1,0 +1,30 @@
+connection:
+  url: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/flux_data_simplified.csv"
+  headers: 1
+  column_mappings:
+    timestamp: datetime
+    u_windspeed: u_unrot
+    v_windspeed: v_unrot
+    w_windspeed: w_unrot
+    mean_windspeed: wind_speed
+
+config:
+  parameters:
+    - co2_flux
+    - h2o_flux
+    - u_windspeed
+    - v_windspeed
+    - w_windspeed
+    - mean_windspeed
+
+  sanitize: true
+  sensor_name: "Reifsteck"
+
+
+

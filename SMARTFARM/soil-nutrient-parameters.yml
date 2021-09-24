@@ -1,0 +1,153 @@
+inputs:
+  location: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+new_parameters:
+
+    soil-nutrient-bulk-density:
+      title: Soil Nutrient - Bulk Density
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: g/cm^3
+    
+    soil-nutrient-organic-matter:
+      title: Soil Nutrient - Organic Matter
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: '%'
+    
+    soil-nutrient-cation-exchange:
+      title: Soil Nutrient - Cation Exchange Capacity
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: meq/100g
+    
+    soil-nutrient-soil-ph:
+      title: Soil Nutrient - Soil pH
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: pH
+
+    soil-nutrient-buffer-ph:
+      title: Soil Nutrient - Buffer pH
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: pH
+
+    soil-nutrient-phosphorus:
+      title: Soil Nutrient - Phosphorus
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-pottasium:
+      title: Soil Nutrient - Pottasium
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-calcium:
+      title: Soil Nutrient - Calcium
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-magnesium:
+      title: Soil Nutrient - Magnesium
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-sulfur:
+      title: Soil Nutrient - Sulfur
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-sodium:
+      title: Soil Nutrient - Sodium
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-zinc:
+      title: Soil Nutrient - Zinc
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-manganese:
+      title: Soil Nutrient - Manganese
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-iron:
+      title: Soil Nutrient - Iron
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-copper:
+      title: Soil Nutrient - Copper
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-boron:
+      title: Soil Nutrient - Boron
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: ppm
+
+    soil-nutrient-k-saturation:
+      title: Soil Nutrient - K Saturation
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: '%'
+
+    soil-nutrient-mg-saturation:
+      title: Soil Nutrient - Mg Saturation
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: '%'
+
+    soil-nutrient-ca-saturation:
+      title: Soil Nutrient - Ca Saturation
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: '%'
+
+    soil-nutrient-na-saturation:
+      title: Soil Nutrient - Na Saturation
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: '%'
+
+    soil-nutrient-h-saturation:
+      title: Soil Nutrient - H Saturation
+      categories:
+       -  name: Soil Nutrient
+          detail_type: time
+      unit: '%'

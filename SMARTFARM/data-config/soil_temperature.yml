@@ -1,0 +1,58 @@
+
+inputs:
+  location: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/SoilTemperature.Reifsteck.2020.csv"
+  headers: 1
+  datetime_format: '%m/%d/%y %H:%M'
+  column_mappings:
+    timestamp: TIMESTAMP
+    value:
+      5cm : TC_5cmP0
+      10cm: TC_10cmP0
+      20cm: TC_20cmP0
+      30cm: TC_30cmP0
+      40cm: TC_40cmP0
+      50cm: TC_50cmP0
+      60cm: TC_60cmP0
+      75cm: TC_75cmP0
+      100cm: TC_100cmP0
+
+config:
+  parameter: soil-temperature
+  sanitize: true
+  sensor_name: "Reifsteck"
+
+
+new_parameters:
+    soil-temperature:
+      title: Soil Temperature
+      categories:
+        - name: Soil Temperature
+          detail_type: stacked-bar
+      unit: unit
+      scale_names:
+        - 5cm
+        - 10cm
+        - 20cm
+        - 30cm
+        - 40cm
+        - 50cm
+        - 60cm
+        - 75cm
+        - 100cm
+      scale_colors:
+        - '#396AB1'
+        - '#DA7C30'
+        - '#3E9651'
+        - '#CC2529'
+        - '#535154'
+        - '#6B4C9A'
+        - '#922428'
+        - '#948B3D'
+        - '#3ca399'

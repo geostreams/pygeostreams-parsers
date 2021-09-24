@@ -1,0 +1,18 @@
+connection:
+  url: "http://localhost:9000"
+  user: 
+  password: 
+
+file:
+  location: "local"
+  path: "/Users/aarajh/geostreams/pygeotemporal-parsers/SMARTFARM/data/SIF.Reifsteck.2020.csv"
+  headers: 1
+  datetime_format: '%m/%d/%y %H:%M'
+  column_mappings:
+    timestamp: Datetime
+    value: SIF760 (mW m^2 nm-1 sr-1)
+
+config:
+  parameter: sif
+  sanitize: true
+  sensor_name: "Reifsteck"

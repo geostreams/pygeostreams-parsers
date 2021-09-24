@@ -1,0 +1,215 @@
+inputs:
+  location: "http://localhost:9000/geostreams"
+  user: 
+  password: 
+
+new_parameters:
+# Kaiyu Group Parameters
+    sif:
+      title: Solar Induced Fluorescence 
+      categories:
+       -  name: Uncategorized
+          detail_type: time
+      unit: mW m^2 nm-1 sr-1
+
+    canopy-height:
+      title: Canopy Height
+      categories:
+       -  name: Plant
+          detail_type: stacked-line-with-error
+      scale_names:
+        - value
+        - error
+      unit: m
+
+    leaf-area-index:
+      title: Leaf Area Index
+      categories:
+       -  name: Plant
+          detail_type: stacked-line-with-error
+      scale_names:
+        - value
+        - error
+      unit: m^2
+    
+    soil-moisture:
+      title: Soil Moisture
+      categories:
+        - name: Soil Moisture
+          detail_type: stacked-bar
+      unit: vwc
+      scale_names:
+        - 5 cm
+        - 10 cm
+        - 20 cm
+        - 30 cm
+        - 40 cm
+        - 50 cm
+        - 60 cm
+        - 75 cm
+        - 100 cm
+      scale_colors:
+        - '#396AB1'
+        - '#DA7C30'
+        - '#3E9651'
+        - '#CC2529'
+        - '#535154'
+        - '#6B4C9A'
+        - '#922428'
+        - '#948B3D'
+        - '#3ca399'
+
+# # DK group Parameters
+    biomass:
+      title: Dry Biomass
+      categories:
+       -  name: Uncategorized
+          detail_type: time
+      unit: Mg/ha
+
+    plant-nutrient-sulfur:
+      title: Plant Nutrient - Sulfur
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: '%'
+
+    plant-nutrient-nitrogen:
+      title: Plant Nutrient - Nitrogen
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: '%'
+
+    plant-nutrient-phosphorus:
+      title: Plant Nutrient - Phosphorus
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: '%'
+
+    plant-nutrient-magnesium:
+      title: Plant Nutrient - Magnesium
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: '%'
+
+    plant-nutrient-calcium:
+      title: Plant Nutrient - Calcium
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: '%'
+
+    plant-nutrient-sodium:
+      title: Plant Nutrient - Sodium
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: '%'
+
+    plant-nutrient-boron:
+      title: Plant Nutrient - Boron
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: ppm
+
+    plant-nutrient-zinc:
+      title: Plant Nutrient - Zinc
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: ppm
+
+    plant-nutrient-manganese:
+      title: Plant Nutrient - Manganese
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: ppm
+
+    plant-nutrient-iron:
+      title: Plant Nutrient - Iron
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: ppm
+
+    plant-nutrient-copper:
+      title: Plant Nutrient - Copper
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: ppm
+
+    plant-nutrient-aluminum:
+      title: Plant Nutrient - Aluminum
+      categories:
+       -  name: Plant Nutrient
+          detail_type: time
+      unit: ppm
+
+    water-quality-nh4:
+      title: Water Quality - NH4
+      categories:
+       -  name: Water Quality
+          detail_type: time
+      unit: 'ppm'
+
+    water-quality-no3:
+      title: Water Quality - NO3
+      categories:
+       -  name: Water Quality
+          detail_type: time
+      unit: 'ppm'
+
+    water-quality-po4:
+      title: Water Quality - PO4
+      categories:
+       -  name: Water Quality
+          detail_type: time
+      unit: 'ppm'
+# Carl's Group Parameter
+    co2_flux:
+      title: CO2 Flux
+      categories:
+       -  name: Uncategorized
+          detail_type: time
+      unit: µmol+1s-1m-2
+
+    h2o_flux:
+      title: H20 Flux
+      categories:
+       -  name: Uncategorized
+          detail_type: time
+      unit: mmol+1s-1m-2
+
+    u_windspeed:
+      title: Wind Speed - u anemometer axis
+      categories:
+       -  name: Wind Speed
+          detail_type: time
+      unit: ms^-1
+
+    v_windspeed:
+      title: Wind Speed - v anemometer axis
+      categories:
+       -  name: Wind Speed
+          detail_type: time
+      unit: ms^-1
+
+    w_windspeed:
+      title: Wind Speed - w anemometer axis
+      categories:
+       -  name: Wind Speed
+          detail_type: time
+      unit: ms^-1
+
+    mean_windspeed:
+      title: Mean Wind Speed
+      categories:
+        - name: Wind Speed
+          detail_type: time
+      unit: m+1s-1

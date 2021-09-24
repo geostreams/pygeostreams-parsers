@@ -1,0 +1,21 @@
+inputs:
+  location: "http://localhost:9000"
+  user: 
+  password: 
+
+    
+config:
+    sensor:
+        geometry:
+            type": Point
+            coordinates: [ -88.2900750,40.0062722, 0]
+        properties:
+            region: "Reifsteck"
+            type:
+                id: "field"
+                title: "Field Data"
+            name: "Reifsteck"
+            popupContent: "Reifsteck - Field Data"
+
+sensorscreate:
+    - "Reifsteck"
