@@ -1,6 +1,6 @@
 import requests
 
-sensor_id = 254
+sensor_id =
 login = {
     "identifier": "",
     "password": ""
@@ -15,7 +15,7 @@ auth_headers = {
 }
 
 # Submit recalculate request
-url = "https://smartfarm.ncsa.illinois.edu/api/cache?sensor_id=%s" % sensor_id
+url = "https://smartfarm.ncsa.illinois.edu/geostreams/api/cache?sensor_id=%s" % sensor_id
 r = requests.post(url, headers=auth_headers)
 print(r.status_code)
 print(r.text)
