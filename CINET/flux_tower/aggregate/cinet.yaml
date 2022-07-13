@@ -1,0 +1,7 @@
+clowder_host: https://cinet.ncsa.illinois.edu/clowder/
+csv_file: /home/fluxtower/aggregate/data.csv
+dat_file: /var/opt/CampbellSci/LoggerNet/Fluxtower_flux.dat
+dataset_id: 61686d62e4b00ca690e54657
+file_id: 62cee1efe4b01bc12759376b
+key: 271e28cb-347c-4628-96b5-9c5e75db8dcf
+log: /home/fluxtower/aggregate/upload.log

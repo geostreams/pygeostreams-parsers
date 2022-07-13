@@ -1,0 +1,10 @@
+clowder_host: https://cinet.ncsa.illinois.edu/clowder/
+data_file: /home/riverlab/data.csv
+chemistry_data_file: /home/riverlab/chemistry_data.csv
+dataset_id: 61686d84e4b00ca690e54663
+file_id: 624da517e4b008bfd9146d9c
+chemistry_file_id: 624da517e4b008bfd9146d9d
+key: 271e28cb-347c-4628-96b5-9c5e75db8dcf
+riverlab_endpoint: https://app.extralab-system.com:8007/data/Monticello/lastpoint
+chemistry_endpoint: https://app.extralab-system.com:8007/data/Monticello/ic/lastpoint
+chemistry_alldata: https://app.extralab-system.com:8007/data/Monticello/allic

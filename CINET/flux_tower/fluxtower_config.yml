@@ -1,0 +1,8 @@
+clowder: [{
+  clowder_host: https://cinet.ncsa.illinois.edu/clowder/,
+  key: 271e28cb-347c-4628-96b5-9c5e75db8dcf,
+  summary_dataset_id: 6218f72ae4b024d4c1881561,
+  zip_dataset_id: 61256f164f0c254df9ba57b9}]
+source_files: /home/sftpflux/incoming
+zip_destination: /home/fluxtower/files
+summary_destination: /home/fluxtower/summary

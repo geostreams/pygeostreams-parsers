@@ -5,6 +5,7 @@ inputs:
   password: "clowder_password"
   timestamp: "TIMESTAMP"
   sourcefile: "/var/opt/CampbellSci/LoggerNet/FluxTower_flux.dat"
+  alert_threshold_hours: 6
 config:
   dataset_source_id: "DatasetID"
   sensor:

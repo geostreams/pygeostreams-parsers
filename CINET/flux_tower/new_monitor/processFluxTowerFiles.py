@@ -5,6 +5,8 @@ import requests
 import yaml
 from datetime import datetime, timedelta
 import pandas as pd
+import smtplib
+import ssl
 
 #from pygeostreams.sensors import SensorsApi
 #from pygeostreams.streams import StreamsApi
@@ -14,12 +16,43 @@ import pandas as pd
 # Read ongoing DAT file, pull moving analysis window and run through analysis, email if bad.
 # Parse into datapoints and upload file to Clowder, deleting current aggregate file.
 # TODO: Create an annual aggregate file once per year.
+QC_ENABLED = False
 
 # solar radiation cutoff for day/night
 rad_threshold = 1
 # Maintain a buffer of previous N days of datapoints for QC
 moving_window_size = 90
 
+def send_email_alert(message):
+  smtp_server = ""
+  port = 587  # For starttls
+  sender_email = ""
+  password = ""
+  receiver_email = "cinet-monitor@ncsa.illinois.edu"
+  message = """\
+    Subject: CINet Flux Tower Alert
+    
+    %s""" % message
+
+  # Create a secure SSL context
+  context = ssl.create_default_context()
+
+  # Try to log in to server and send email
+  try:
+    server = smtplib.SMTP(smtp_server,port)
+    server.ehlo() # Can be omitted
+    server.starttls(context=context) # Secure the connection
+    server.ehlo() # Can be omitted
+    server.login(sender_email, password)
+
+    server.sendmail(sender_email, receiver_email, message)
+
+
+  except Exception as e:
+    # Print any error messages to stdout
+    print(e)
+  finally:
+    server.quit()
 
 # Return dict of {sensors/streams/datapoints} pygeostreams api clients
 def create_api_clients(multi_config):
@@ -233,9 +266,6 @@ def process_new_data(src, multi_config, last_processed):
         # Remove oldest day if we over-filled the window, then recalculate aggregates on full window only
         if len(analysis_buffer) > moving_window_size:
           analysis_buffer.pop(0)
-        if len(analysis_buffer) == moving_window_size:
-          print("calculating analysis buffer from "+current_date)
-          analysis_summary = calculate_analysis_buffer(analysis_buffer)
 
       current_day.append(dp)
 
@@ -247,7 +277,8 @@ def process_new_data(src, multi_config, last_processed):
         continue
 
       # If N days available, execute QC before uploading
-      if len(analysis_buffer) == moving_window_size:
+      if len(analysis_buffer) == moving_window_size and QC_ENABLED:
+        analysis_summary = calculate_analysis_buffer(analysis_buffer)
         qc_results = validate_datapoint(dp, analysis_summary, multi_config)
         dp["qc_status"] = qc_results
 
@@ -260,7 +291,14 @@ def process_new_data(src, multi_config, last_processed):
         outfile.write(dp["TIMESTAMP"]+","+'"not checked (insufficient data for analysis window)"\n')
 
       #upload_datapoint(dp, multi_config)
+      #copy DAT file to CSV and upload to Clowder
       line = datfile.readline()
+
+    # Email alert if no datapoints received in N hours
+    last_dt = datetime.strptime(dp["TIMESTAMP"], '%Y-%m-%d %H:%M:%S')
+    time_since_last = datetime.now() - last_dt
+    if time_since_last.hours > config["inputs"]["alert_threshold_hours"]:
+      send_email_alert("No new datapoints received in > 6 hours (last received: %s)" % dp["TIMESTAMP"])
 
     outfile.close()
     print("Done.")
@@ -271,7 +309,7 @@ def main():
   multi_config = yaml.load(open("flux_tower_config.yml", 'r'))
 
   # Import DAT file to Clowder, creating an annual aggregate when necessary
-  src = multi_config['sourcefile']['input']
+  src = multi_config['inputs']['sourcefile']
   log = "LastProcessed__FluxTower_flux.log"
 
   # Check logfile for last read line (for datapoints) - if none found, will start at top of datfile
