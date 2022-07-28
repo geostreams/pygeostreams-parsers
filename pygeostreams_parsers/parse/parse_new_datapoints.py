@@ -122,7 +122,6 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
         print "Number of Rows to Parse = " + str(len(all_data))
 
     for sensor_name in sensor_names:
-
         if '&' in sensor_name:
             sensor_name = str(sensor_name.replace('&', '%26'))
         if printout is True:
@@ -140,9 +139,8 @@ def parse_data(timestamp, config, sensor_names, parameters, datafile,
 
         # Create Datapoints for each date for this Sensor Name
         for row in range(len(all_data)):
-
             # Get the Date in the proper format
-            raw_date = all_data[row][timestamp]
+            raw_date = record["TIMESTAMP"]
             if '/' in raw_date:
                 sensor_date_raw = (
                     datetime.strptime(raw_date, '%m/%d/%Y %H:%M:%S %p'))
