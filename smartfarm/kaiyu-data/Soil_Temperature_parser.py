@@ -2,7 +2,8 @@ import copy
 import pandas as pd
 import json
 
-from datetime import datetime
+import time
+import datetime
 
 from pygeostreams.time_transformers import time2utc
 from pygeostreams.datapoints import DatapointsApi
@@ -12,43 +13,36 @@ from pygeostreams.cache import CacheApi
 # Change sensor id as needed to update that sensor's datapoints
 sensor_id = 261
 
-#
 datapoints_client = DatapointsApi(host="", username="",
                             password="")
 sensors_client = SensorsApi(host="", username="",
                             password="")
 cache_client = CacheApi(host="", username="",
                             password="")
-df = pd.read_csv('SIF.Reifsteck.2020.csv')
 
-# define what columns need to be ingested
-cols = ["Datetime", "SIF760 (mW m^2 nm-1 sr-1)"]
+data = pd.read_csv('SoilTemperature.Reifsteck.2020.csv')
 
-
-
-
-data = df[df.columns.intersection(cols)]
-# # map column names to readable variable names
-col_dict = {"Datetime": "timestamp", "SIF760 (mW m^2 nm-1 sr-1)": "sif"}
-
+# map column names to readable variable names
+col_dict = {"TIMESTAMP": "timestamp",
+            "TC_5cmP0": "5 cm",
+            "TC_10cmP0": "10 cm",
+            "TC_20cmP0": "20 cm",
+            "TC_30cmP0": "30 cm",
+            "TC_40cmP0": "40 cm",
+            "TC_50cmP0": "50 cm",
+            "TC_60cmP0": "60 cm",
+            "TC_75cmP0": "75 cm",
+            "TC_100cmP0": "100 cm"}
+#
+#
 data.columns = [col_dict.get(x, x) for x in data.columns]
 
-
-# Cleaning Data
-# Removing certain outlying data (hardcoded removal)
-data = data[data['timestamp'] != '31-Dec--0001 00:00:00']
+def time_conversion(x):
+    return datetime.datetime.strptime(x,'%m/%d/%y %H:%M').strftime('%Y-%m-%d %H:%M:%S')
 
 
-def timestamp_conversion(x):
-    try:
-        return datetime.strptime(x, "%m/%d/%Y %H:%M").strftime("%Y-%m-%d %H:%M:%S")
-    except:
-        print("Error with conversion of this value - ", x)
-
-
-data["timestamp"] = data["timestamp"].apply(timestamp_conversion)
-# print(data.head())
-
+data["timestamp"] = data["timestamp"].apply(time_conversion)
+print(data.head())
 
 
 datapoint = {
@@ -68,17 +62,17 @@ datapoint = {
     'sensor_name': "Reifsteck Site",
     'properties': {}
 }
-
+#
 datapoints = data.to_json(orient='records')
+
 
 dps = json.loads(datapoints)
 datapoint_list = []
 
-
-
 for d in dps:
     dp = copy.deepcopy(datapoint)
     time = time2utc(d.pop("timestamp"))
+    d = {"soil_temperature": d}
     dp["properties"] = d
     dp["start_time"] = dp["end_time"] = time
     r = datapoints_client.datapoint_post(dp)

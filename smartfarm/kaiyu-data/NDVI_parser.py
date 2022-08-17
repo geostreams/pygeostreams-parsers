@@ -9,6 +9,8 @@ from pygeostreams.datapoints import DatapointsApi
 from pygeostreams.sensors import SensorsApi
 from pygeostreams.cache import CacheApi
 
+from tqdm import tqdm
+
 # Change sensor id as needed to update that sensor's datapoints
 sensor_id = 261
 
@@ -19,35 +21,24 @@ sensors_client = SensorsApi(host="", username="",
                             password="")
 cache_client = CacheApi(host="", username="",
                             password="")
-df = pd.read_csv('SIF.Reifsteck.2020.csv')
+df = pd.read_csv('NDVI.Reifsteck.2020.csv')
 
 # define what columns need to be ingested
-cols = ["Datetime", "SIF760 (mW m^2 nm-1 sr-1)"]
+cols = ["Datetime", "NDVI"]
 
 
 
 
 data = df[df.columns.intersection(cols)]
 # # map column names to readable variable names
-col_dict = {"Datetime": "timestamp", "SIF760 (mW m^2 nm-1 sr-1)": "sif"}
+col_dict = {"Datetime": "timestamp", "NDVI": "ndvi"}
 
 data.columns = [col_dict.get(x, x) for x in data.columns]
 
 
 # Cleaning Data
 # Removing certain outlying data (hardcoded removal)
-data = data[data['timestamp'] != '31-Dec--0001 00:00:00']
-
-
-def timestamp_conversion(x):
-    try:
-        return datetime.strptime(x, "%m/%d/%Y %H:%M").strftime("%Y-%m-%d %H:%M:%S")
-    except:
-        print("Error with conversion of this value - ", x)
-
-
-data["timestamp"] = data["timestamp"].apply(timestamp_conversion)
-# print(data.head())
+data.dropna(subset=['timestamp'], inplace= True)
 
 
 
@@ -75,16 +66,15 @@ dps = json.loads(datapoints)
 datapoint_list = []
 
 
-
-for d in dps:
+for d in tqdm(dps):
     dp = copy.deepcopy(datapoint)
     time = time2utc(d.pop("timestamp"))
     dp["properties"] = d
     dp["start_time"] = dp["end_time"] = time
     r = datapoints_client.datapoint_post(dp)
-    print(r.status_code)
     if r.status_code != 200:
-        datapoint_list.append(dp)
+        print(r.status_code)
+    datapoint_list.append(dp)
 
 with open('data.json', 'w') as f:
     json.dump(datapoint_list, f)
