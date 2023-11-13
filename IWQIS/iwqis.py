@@ -74,7 +74,7 @@ for site in sites:
     sensor_for_site = sensorclient.sensor_get_by_name(site['uid']).json()['sensors']
 
     # get the sensor or create if needed
-    if len(sensor_for_site)  > 0:
+    if len(sensor_for_site) > 0:
         sensor = sensor_for_site[0]
         stream = streamclient.stream_get_by_name_json(site['uid'])['streams'][0]
 
@@ -191,7 +191,7 @@ for site in sites:
     logging.debug("[iwqis.py] updating sensor " + str(sensor['id']))
     sensorclient.sensor_statistics_post(sensor['id'])
 
-    sensor_for_update = sensorclient.sensor_get(sensor['id'])
+    sensor_for_update = sensorclient.sensor_get(sensor['id']).json()
 
     logging.debug(" [iwqis.py] Setting online status for sensor " + str(sensor['id']))
 

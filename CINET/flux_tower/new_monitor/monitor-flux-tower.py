@@ -16,7 +16,7 @@ import ssl
 # Read ongoing DAT file, pull moving analysis window and run through analysis, email if bad.
 # Parse into datapoints and upload file to Clowder, deleting current aggregate file.
 # TODO: Create an annual aggregate file once per year.
-QC_ENABLED = False
+QC_ENABLED = False # Currently triggers too many alerts.
 
 # solar radiation cutoff for day/night
 rad_threshold = 1
@@ -24,11 +24,11 @@ rad_threshold = 1
 moving_window_size = 90
 
 def send_email_alert(message):
-  smtp_server = ""
+  smtp_server = "mail.ncsa.illinois.edu"
   port = 587  # For starttls
-  sender_email = ""
+  sender_email = "cinet-flux-monitor@ncsa.illinois.edu"
   password = ""
-  receiver_email = "cinet-monitor@ncsa.illinois.edu"
+  receiver_email = "cinet-flux-monitor@ncsa.illinois.edu"
   message = """\
     Subject: CINet Flux Tower Alert
     
@@ -227,7 +227,7 @@ def upload_datapoint(record, multi_config):
     # Post Datapoint
     # datapoint_post = datapoint_client.datapoint_post(datapoint)
 
-def process_new_data(src, multi_config, last_processed):
+def process_new_data(src, config, multi_config, last_processed):
   found_last_processed = last_processed is None
   outfile = open("fluxTowerTest.csv", 'w')
 
@@ -297,8 +297,10 @@ def process_new_data(src, multi_config, last_processed):
     # Email alert if no datapoints received in N hours
     last_dt = datetime.strptime(dp["TIMESTAMP"], '%Y-%m-%d %H:%M:%S')
     time_since_last = datetime.now() - last_dt
-    if time_since_last.hours > config["inputs"]["alert_threshold_hours"]:
-      send_email_alert("No new datapoints received in > 6 hours (last received: %s)" % dp["TIMESTAMP"])
+    thresh_seconds = config["inputs"]["alert_threshold_hours"]*3600
+    print("Latest timestamp: %s (%s minutes since previous)" % (last_dt, int(time_since_last.seconds/60)))
+    if time_since_last.seconds > thresh_seconds:
+      send_email_alert("No new datapoints received in > %s hours (last received: %s)" % (thresh_seconds/3600, dp["TIMESTAMP"]))
 
     outfile.close()
     print("Done.")
@@ -319,7 +321,7 @@ def main():
       last_processed = last.readline()
     print("Last datapoint processed: "+last_processed)
 
-  process_new_data(src, multi_config, last_processed)
+  process_new_data(src, multi_config, multi_config, last_processed)
   # TODO: Upload new file to Clowder and delete previous aggregated file
 
 if __name__ == "__main__":
