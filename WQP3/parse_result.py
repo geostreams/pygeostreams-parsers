@@ -195,7 +195,7 @@ for state_id in state_ids:
             value = float(entry["ResultMeasureValue"])
         except:
             value = entry["ResultMeasureValue"]
-        if value == '' or value == 'nan': continue
+        if value == '' or str(value) == 'nan': continue
 
         # Determine location
         latitude = float(entry["ActivityLocation/LatitudeMeasure"])
@@ -307,11 +307,11 @@ for state_id in state_ids:
             print(f"...{measure}")
             properties = stations[station]["properties"]
 
-            parameter_id = get_or_create_parameter(measure, {
-                'name': measure,
-                'title': measure,
-                'unit': units[measure]
-            })["id"]
+            # parameter_id = get_or_create_parameter(measure, {
+            #     'name': measure,
+            #     'title': measure,
+            #     'unit': units[measure]
+            # })["id"]
 
             stream_name = f"{station} - {measure}"
             stream_data = {
@@ -320,7 +320,7 @@ for state_id in state_ids:
                 "type": "Feature",
                 "geometry": stations[station]['geometry'],
                 "properties": properties,
-                "parameters": [measure]
+                # "parameters": [measure]
             }
             stream = get_or_create_stream(stream_name, stream_data)
             stream_id = stream["id"]
@@ -331,7 +331,7 @@ for state_id in state_ids:
             for observation in observations:
                 if observation["x"] <= new_latest and new_latest != "N/A":
                     continue
-                if observation["y"] == "nan": continue
+                if str(observation["y"]) == "nan": continue
                 new_latest = observation["x"]
                 datapoints.append({
                     'start_time': observation["x"] + "T00:00:00Z",
@@ -345,6 +345,9 @@ for state_id in state_ids:
                         measure: observation["y"]
                     }
                 })
+                if len(datapoints) > 200:
+                    post_bulk_datapoints(stream_id, datapoints)
+                    datapoints = []
             if len(datapoints) > 0:
                 post_bulk_datapoints(stream_id, datapoints)
                 # TODO: Update stream end time to new_latest
