@@ -116,7 +116,11 @@ def get_or_create_stream(stream_id, stream_json):
         print(f"Creating stream: {stream_id}")
         stream = requests.post(post_url, json=stream_json, headers=headers)
         stream.raise_for_status()
-        return stream.json()
+        # Get newly created stream
+        response = requests.get(get_url)
+        response.raise_for_status()
+        results = response.json()['streams']
+        return results[0]
 
 def post_bulk_datapoints(stream_id, datapoints):
     print(f"Posting {len(datapoints)} datapoints to {stream_id}")
@@ -155,8 +159,8 @@ for state_id in state_ids:
     alldata = {}
     for i, entry in df.iterrows():
         time = entry["ActivityStartDate"].rstrip()
-        station = entry["MonitoringLocationIdentifier"]
-        name = entry["MonitoringLocationName"]
+        station = entry["MonitoringLocationIdentifier"].replace("&", "and")
+        name = entry["MonitoringLocationName"].replace("&", "and")
         #type_name = entry["MonitoringLocationTypeName"]
         description = str(entry["SampleCollectionMethod/MethodDescriptionText"])
         organization = entry["OrganizationFormalName"]
@@ -275,22 +279,22 @@ for state_id in state_ids:
 
             print(f"...{measure}")
             properties = stations[station]["properties"]
-            stream_name = f"{properties["MonitoringLocationName"]} - {measure}"
+            stream_name = f"{station} - {measure}"
             stream_data = {
                 "sensor_id": properties["sensor_id"],
                 "name": stream_name,
-                #"type": properties["MonitoringLocationTypeName"],
+                "type": "Feature",
                 "geometry": stations[station]['geometry'],
                 "properties": properties
             }
-            stream = get_or_create_stream(stream_name, stream_data)
+            stream_id = get_or_create_stream(stream_name, stream_data)["id"]
             latest_datapoint = stream["end_time"]
             new_latest = latest_datapoint
 
             datapoints = []
             for observation in observations:
                 # TODO: If this stream already exists, how to avoid duplication?
-                if observation["x"] <= latest_datapoint:
+                if observation["x"] <= new_latest and new_latest != "N/A":
                     continue
                 new_latest = observation["x"]
                 datapoints.append({
@@ -298,7 +302,7 @@ for state_id in state_ids:
                     'end_time': observation["x"],
                     'type': 'Feature',
                     'geometry': stations[station]['geometry'],
-                    'stream_id': stream["id"],
+                    'stream_id': stream_id,
                     'sensor_id': properties["sensor_id"],
                     'sensor_name': properties["MonitoringLocationName"],
                     "properties": {
