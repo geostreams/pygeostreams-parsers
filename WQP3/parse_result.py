@@ -287,7 +287,8 @@ for state_id in state_ids:
                 "geometry": stations[station]['geometry'],
                 "properties": properties
             }
-            stream_id = get_or_create_stream(stream_name, stream_data)["id"]
+            stream = get_or_create_stream(stream_name, stream_data)
+            stream_id = stream["id"]
             latest_datapoint = stream["end_time"]
             new_latest = latest_datapoint
 
@@ -312,7 +313,6 @@ for state_id in state_ids:
             if len(datapoints) > 0:
                 post_bulk_datapoints(stream_id, datapoints)
                 # TODO: Update stream end time to new_latest
-
 
         # TODO: Update cache/bins for sensor
 
