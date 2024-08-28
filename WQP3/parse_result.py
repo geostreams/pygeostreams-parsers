@@ -124,7 +124,7 @@ def get_or_create_stream(stream_id, stream_json):
 
 def post_bulk_datapoints(stream_id, datapoints):
     print(f"Posting {len(datapoints)} datapoints to {stream_id}")
-    post_url = f"{geostreams_api}sensors/datapoints/bulk"
+    post_url = f"{geostreams_api}datapoints/bulk"
     response = requests.post(post_url, json={
         "stream_id": stream_id,
         "datapoints": datapoints
