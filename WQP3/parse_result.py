@@ -38,15 +38,7 @@ gapfills = {
 
 huc_data = GeoDataFrame.from_file('../huc_finder/huc-all.shp')
 
-# Get a token from geostreams
-url = f"{geostreams_api}authenticate"
-resp = requests.post(url, json={'identifier': geostreams_user, 'password': geostreams_password},
-                     headers={'Content-Type': 'application/json'})
-resp.raise_for_status()
-token = resp.headers["x-auth-token"]
-headers = {'X-Auth-Token': token, 'Content-type': 'application/json'}
-
-# Fetch data
+# Fetch data from WQP
 base_url = 'https://www.waterqualitydata.us/data/Result/search?mimeType=csv&zip=yes'
 dl_headers = {'Content-Type': 'application/json', 'Accept': 'application/zip'}
 for state_id in state_ids:
@@ -79,6 +71,15 @@ for state_id in state_ids:
         # z = zipfile.ZipFile(io.BytesIO(r.content))
         # z.extractall()
         os.rename("resultphyschem.csv", outfile)
+
+
+# Get a token from geostreams
+url = f"{geostreams_api}authenticate"
+resp = requests.post(url, json={'identifier': geostreams_user, 'password': geostreams_password},
+                     headers={'Content-Type': 'application/json'})
+resp.raise_for_status()
+token = resp.headers["x-auth-token"]
+headers = {'X-Auth-Token': token, 'Content-type': 'application/json'}
 
 all_targets = list(targets)
 for t in gapfills:
@@ -130,6 +131,32 @@ def post_bulk_datapoints(stream_id, datapoints):
     if response.status_code == 200:
         return response.json()
 
+def get_or_create_parameter(parameter_name, parameter_json):
+    # Fetch existing parameters
+    param_url = f"{geostreams_api}parameters"
+    response = requests.get(param_url)
+    response.raise_for_status()
+    parameters = response.json()['parameters']
+    for p in parameters:
+        if p['title'] == parameter_name or p['name'] == parameter_name:
+            return p
+
+    # Otherwise create it
+    post_url = f"{geostreams_api}parameters"
+    print(f"Creating parameter: {parameter_name}")
+    sensor = requests.post(post_url, json=parameter_json, headers=headers)
+    sensor.raise_for_status()
+
+    # Get newly created sensor
+    response = requests.get(param_url)
+    response.raise_for_status()
+    parameters = response.json()['parameters']
+
+    for p in parameters:
+        if p['title'] == parameter_name or p['name'] == parameter_name:
+            return p
+    return None
+
 def getHuc8(lat, lon):
     point = GeoDataFrame(pd.DataFrame({'id': [0]}), crs='epsg:4269',
                              geometry=[wkt.loads('POINT(' + str(lon) + ' ' + str(lat) + ')')])
@@ -154,6 +181,7 @@ for state_id in state_ids:
     # Prepare observation data
     stations = {}
     alldata = {}
+    units = {}
     for i, entry in df.iterrows():
         time = entry["ActivityStartDate"].rstrip()
         station = entry["MonitoringLocationIdentifier"].replace("&", "and")
@@ -162,11 +190,12 @@ for state_id in state_ids:
         description = str(entry["SampleCollectionMethod/MethodDescriptionText"])
         organization = entry["OrganizationFormalName"]
         measure = entry["CharacteristicName"]
+        unit = entry["ResultMeasure/MeasureUnitCode"]
         try:
             value = float(entry["ResultMeasureValue"])
         except:
             value = entry["ResultMeasureValue"]
-        if value == '': continue
+        if value == '' or value == 'nan': continue
 
         # Determine location
         latitude = float(entry["ActivityLocation/LatitudeMeasure"])
@@ -217,6 +246,8 @@ for state_id in state_ids:
             alldata[station] = {}
         if measure not in alldata[station]:
             alldata[station][measure] = []
+        if measure not in units:
+            units[measure] = unit
 
         # Check if we can add to existing record
         found_existing = False
@@ -273,16 +304,23 @@ for state_id in state_ids:
 
         for measure in alldata[station]:
             observations = sorted(alldata[station][measure], key=lambda x: x["x"])
-
             print(f"...{measure}")
             properties = stations[station]["properties"]
+
+            parameter_id = get_or_create_parameter(measure, {
+                'name': measure,
+                'title': measure,
+                'unit': units[measure]
+            })["id"]
+
             stream_name = f"{station} - {measure}"
             stream_data = {
                 "sensor_id": properties["sensor_id"],
                 "name": stream_name,
                 "type": "Feature",
                 "geometry": stations[station]['geometry'],
-                "properties": properties
+                "properties": properties,
+                "parameters": [measure]
             }
             stream = get_or_create_stream(stream_name, stream_data)
             stream_id = stream["id"]
@@ -291,13 +329,13 @@ for state_id in state_ids:
 
             datapoints = []
             for observation in observations:
-                # TODO: If this stream already exists, how to avoid duplication?
                 if observation["x"] <= new_latest and new_latest != "N/A":
                     continue
+                if observation["y"] == "nan": continue
                 new_latest = observation["x"]
                 datapoints.append({
-                    'start_time': observation["x"],
-                    'end_time': observation["x"],
+                    'start_time': observation["x"] + "T00:00:00Z",
+                    'end_time': observation["x"] + "T00:00:00Z",
                     'type': 'Feature',
                     'geometry': stations[station]['geometry'],
                     'stream_id': stream_id,
