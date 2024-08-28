@@ -125,10 +125,7 @@ def get_or_create_stream(stream_id, stream_json):
 def post_bulk_datapoints(stream_id, datapoints):
     print(f"Posting {len(datapoints)} datapoints to {stream_id}")
     post_url = f"{geostreams_api}datapoints/bulk"
-    response = requests.post(post_url, json={
-        "stream_id": stream_id,
-        "datapoints": datapoints
-    }, headers={'Content-type': 'application/json'})
+    response = requests.post(post_url, json=datapoints, headers={'Content-type': 'application/json'})
     response.raise_for_status()
     if response.status_code == 200:
         return response.json()
