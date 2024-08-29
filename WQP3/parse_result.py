@@ -26,8 +26,8 @@ state_ids = {
 }
 targets = [
     "Nitrogen",
-    "Phosphorus"
-    "Stream flow"
+    "Phosphorus",
+    "Stream flow",
     "pH"
 ]
 gapfills = {
@@ -46,14 +46,14 @@ dl_headers = {'Content-Type': 'application/json', 'Accept': 'application/zip'}
 for state_id in state_ids:
     # Physical query
     state_abbrev = state_ids[state_id]
-    outzip = f"{state_abbrev}_phys_1970.zip"
+    outzip = f"{state_abbrev}_chem_1970.zip" # TODO: This will contain both chem and phys
     outfile = outzip.replace("zip", "csv")
     if not os.path.exists(outfile):
         continue
 
         print(f"Downloading {outfile}")
         cmd = "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/zip' "
-        cmd += f'-d \'{"statecode":["US:{state_id}"],"siteType":["Stream"],"characteristicName":["pH","Stream flow"],"startDateLo":"01-01-1970","dataProfile":"resultPhysChem","providers":["NWIS","STORET"]}\''
+        cmd += f'-d \'{"statecode":["US:{state_id}"],"siteType":["Stream"],"characteristicName":["Nitrogen","Phosphorus","pH","Stream flow"],"startDateLo":"01-01-1970","dataProfile":"resultPhysChem","providers":["NWIS","STORET"]}\''
         cmd += f"'https://www.waterqualitydata.us/data/Result/search?mimeType=csv&zip=yes' --output {outzip}"
         with zipfile.ZipFile(outzip, "r") as zip_ref:
             zip_ref.extractall()
@@ -63,7 +63,7 @@ for state_id in state_ids:
         # query_phys = {
         #     "statecode": [f"US:{state_id}"],
         #     "siteType": ["Stream"],
-        #     "characteristicName": ["pH","Stream flow"],
+        #     "characteristicName": ["Nitrogen","Phosphorus","pH","Stream flow"],
         #     "startDateLo": "01-01-1970",
         #     "dataProfile":"resultPhysChem",
         #     "providers":["NWIS","STORET"]
@@ -74,7 +74,6 @@ for state_id in state_ids:
         # z.extractall()
         os.rename("resultphyschem.csv", outfile)
 
-
 # Get a token from geostreams
 url = f"{geostreams_api}authenticate"
 resp = requests.post(url, json={'identifier': geostreams_user, 'password': geostreams_password},
@@ -82,14 +81,6 @@ resp = requests.post(url, json={'identifier': geostreams_user, 'password': geost
 resp.raise_for_status()
 token = resp.headers["x-auth-token"]
 headers = {'X-Auth-Token': token, 'Content-type': 'application/json'}
-
-
-
-# url = f"{geostreams_api}cache?sensor_id=5235&parameter=Nitrogen"
-# resp = requests.post(url, headers=headers)
-# resp.raise_for_status()
-# exit()
-
 
 all_targets = list(targets)
 for t in gapfills:
@@ -180,7 +171,7 @@ def getHuc8(lat, lon):
 for state_id in state_ids:
     for trait in ["chem", "phys"]:
         state_abbrev = state_ids[state_id]
-        data_file = f"{state_abbrev}_chem_1970.csv"
+        data_file = f"{state_abbrev}_{trait}_1970.csv"
         if not os.path.exists(data_file):
             print(f"{data_file} does not exist")
             continue
@@ -188,9 +179,13 @@ for state_id in state_ids:
         # Load & filter dataframe
         print(f"Scanning {data_file}")
         df = pd.read_csv(data_file)
-        df = df[(df['ResultSampleFractionText'] == 'Total') | (df['ResultSampleFractionText'].str.len() == 0)]
-        df = df[(df['ActivityMediaName'] == 'Water') | (df['ActivityMediaName'].str.len() == 0)]
-        df = df[df['ResultMeasure/MeasureUnitCode'].isin(['mg/L', 'std units', 'ft3/s'])]
+        df = df[(df['ResultSampleFractionText'] == 'Total') |
+                (df['ResultSampleFractionText'].str.len() == 0)]
+        # df = df[(df['ActivityMediaName'] == 'Water') | (df['ActivityMediaName'].str.len() == 0)]
+        df = df[(df['ResultMeasure/MeasureUnitCode'] == 'mg/L') |
+                (df['ResultMeasure/MeasureUnitCode'] == 'ug/L') |
+                (df['ResultMeasure/MeasureUnitCode'] == 'std units') |
+                (df['ResultMeasure/MeasureUnitCode'] == 'ft3/s')]
         df = df[df['CharacteristicName'].isin(all_targets)]
 
         # Prepare observation data
@@ -200,9 +195,9 @@ for state_id in state_ids:
         for i, entry in df.iterrows():
             time = entry["ActivityStartDate"].rstrip()
             station = (entry["MonitoringLocationIdentifier"]
-                       .replace("&", "and")
-                       .replace("#", "-"))
-            name = entry["MonitoringLocationName"].replace("&", "and")
+                       .replace("&", "and").replace("#", "-"))
+            name = (str(entry["MonitoringLocationName"])
+                    .replace("&", "and").replace("#", "-"))
             #type_name = entry["MonitoringLocationTypeName"]
             description = str(entry["SampleCollectionMethod/MethodDescriptionText"])
             organization = entry["OrganizationFormalName"]
@@ -262,8 +257,6 @@ for state_id in state_ids:
                         ]
                     }
                 }
-                sensor_id = get_or_create_sensor(station, stations[station])['id']
-                stations[station]["properties"]["sensor_id"] = sensor_id
                 alldata[station] = {}
             if measure not in alldata[station]:
                 alldata[station][measure] = []
@@ -285,7 +278,6 @@ for state_id in state_ids:
                     "y": value
                 })
 
-        big_count = 0
         for station in stations:
             # Skip stations with < 5 years data
             years = []
@@ -296,7 +288,10 @@ for state_id in state_ids:
                         years.append(obs_year)
             if len(set(years)) < 5:
                 continue
-            big_count += 1
+
+            # Create station if necessary
+            sensor_id = get_or_create_sensor(station, stations[station])['id']
+            stations[station]["properties"]["sensor_id"] = sensor_id
 
             """
             print(f"[{station}] Preparing gap-filled dataset")
@@ -323,10 +318,10 @@ for state_id in state_ids:
                 observations = sorted(alldata_gapfill[measure], key=lambda x: x["x"])
             """
 
+            properties = stations[station]["properties"]
             for measure in alldata[station]:
                 observations = sorted(alldata[station][measure], key=lambda x: x["x"])
                 print(f"...{measure}")
-                properties = stations[station]["properties"]
 
                 # parameter_id = get_or_create_parameter(measure, {
                 #     'name': measure,
@@ -336,7 +331,7 @@ for state_id in state_ids:
 
                 stream_name = f"{station} - {measure}"
                 stream_data = {
-                    "sensor_id": properties["sensor_id"],
+                    "sensor_id": sensor_id,
                     "name": stream_name,
                     "type": "Feature",
                     "geometry": stations[station]['geometry'],
@@ -360,7 +355,7 @@ for state_id in state_ids:
                         'type': 'Feature',
                         'geometry': stations[station]['geometry'],
                         'stream_id': stream_id,
-                        'sensor_id': properties["sensor_id"],
+                        'sensor_id': sensor_id,
                         'sensor_name': properties["MonitoringLocationName"],
                         "properties": {
                             measure: observation["y"]
@@ -373,6 +368,6 @@ for state_id in state_ids:
                     post_bulk_datapoints(stream_id, datapoints)
 
                 # Update cache/bins for stream
-                f"{geostreams_api}cache?sensor_id={sensor_id}&parameter={measure}"
-                resp = requests.post(url, headers=headers)
-                resp.raise_for_status()
+                # url = f"{geostreams_api}cache?sensor_id={sensor_id}&parameter={measure}"
+                # resp = requests.post(url, headers=headers)
+                # resp.raise_for_status()
