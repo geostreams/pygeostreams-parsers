@@ -46,7 +46,7 @@ dl_headers = {'Content-Type': 'application/json', 'Accept': 'application/zip'}
 for state_id in state_ids:
     # Physical query
     state_abbrev = state_ids[state_id]
-    outzip = f"{state_abbrev}_chem_1970.zip" # TODO: This will contain both chem and phys
+    outzip = f"{state_abbrev}_all_1970.zip"
     outfile = outzip.replace("zip", "csv")
     if not os.path.exists(outfile):
         continue
@@ -58,20 +58,6 @@ for state_id in state_ids:
         with zipfile.ZipFile(outzip, "r") as zip_ref:
             zip_ref.extractall()
         os.remove(outzip)
-
-        # TODO: Not working in requests yet
-        # query_phys = {
-        #     "statecode": [f"US:{state_id}"],
-        #     "siteType": ["Stream"],
-        #     "characteristicName": ["Nitrogen","Phosphorus","pH","Stream flow"],
-        #     "startDateLo": "01-01-1970",
-        #     "dataProfile":"resultPhysChem",
-        #     "providers":["NWIS","STORET"]
-        # }
-        # resp = requests.post(base_url, data=query_phys, headers=dl_headers)
-        # resp.raise_for_status()
-        # z = zipfile.ZipFile(io.BytesIO(r.content))
-        # z.extractall()
         os.rename("resultphyschem.csv", outfile)
 
 # Get a token from geostreams
@@ -83,8 +69,8 @@ token = resp.headers["x-auth-token"]
 headers = {'X-Auth-Token': token, 'Content-type': 'application/json'}
 
 all_targets = list(targets)
-for t in gapfills:
-    all_targets += gapfills[t]
+# for t in gapfills:
+#     all_targets += gapfills[t]
 
 def get_or_create_sensor(sensor_id, sensor_json):
     get_url = f"{geostreams_api}sensors?sensor_name={sensor_id}"
@@ -132,7 +118,7 @@ def post_bulk_datapoints(stream_id, datapoints):
     if response.status_code == 200:
         return response.json()
 
-def get_or_create_parameter(parameter_name, parameter_json):
+def get_or_create_parameter(parameter_name, parameter_json, categories=[]):
     # Fetch existing parameters
     param_url = f"{geostreams_api}parameters"
     response = requests.get(param_url)
@@ -145,8 +131,8 @@ def get_or_create_parameter(parameter_name, parameter_json):
     # Otherwise create it
     post_url = f"{geostreams_api}parameters"
     print(f"Creating parameter: {parameter_name}")
-    sensor = requests.post(post_url, json=parameter_json, headers=headers)
-    sensor.raise_for_status()
+    param = requests.post(post_url, json={"parameter": parameter_json, "categories": categories}, headers=headers)
+    param.raise_for_status()
 
     # Get newly created sensor
     response = requests.get(param_url)
@@ -169,8 +155,13 @@ def getHuc8(lat, lon):
 
 
 for state_id in state_ids:
-    for trait in ["chem", "phys"]:
-        state_abbrev = state_ids[state_id]
+    # Prepare observation data
+    state_abbrev = state_ids[state_id]
+    stations = {}
+    alldata = {}
+    params = {}
+
+    for trait in ["chem", "phys", "all"]:
         data_file = f"{state_abbrev}_{trait}_1970.csv"
         if not os.path.exists(data_file):
             print(f"{data_file} does not exist")
@@ -178,52 +169,60 @@ for state_id in state_ids:
 
         # Load & filter dataframe
         print(f"Scanning {data_file}")
-        df = pd.read_csv(data_file)
-        df = df[(df['ResultSampleFractionText'] == 'Total') |
-                (df['ResultSampleFractionText'].str.len() == 0)]
-        # df = df[(df['ActivityMediaName'] == 'Water') | (df['ActivityMediaName'].str.len() == 0)]
-        df = df[(df['ResultMeasure/MeasureUnitCode'] == 'mg/L') |
-                (df['ResultMeasure/MeasureUnitCode'] == 'ug/L') |
-                (df['ResultMeasure/MeasureUnitCode'] == 'std units') |
-                (df['ResultMeasure/MeasureUnitCode'] == 'ft3/s')]
+        df = pd.read_csv(data_file, low_memory=False)
         df = df[df['CharacteristicName'].isin(all_targets)]
+        # df = df[(df['ResultSampleFractionText'] == 'Total') |
+        #          (df['ResultSampleFractionText'].isnull())]
+        # df = df[(df['ResultMeasure/MeasureUnitCode'] == 'mg/l') |
+        #         (df['ResultMeasure/MeasureUnitCode'] == 'mg/L') |
+        #         (df['ResultMeasure/MeasureUnitCode'] == 'ug/L') |
+        #         (df['ResultMeasure/MeasureUnitCode'] == 'std units') |
+        #         (df['ResultMeasure/MeasureUnitCode'] == 'm3/sec')]
 
-        # Prepare observation data
-        stations = {}
-        alldata = {}
-        units = {}
         for i, entry in df.iterrows():
+            try:
+                value = float(entry["ResultMeasureValue"])
+            except:
+                value = entry["ResultMeasureValue"]
+            if value == '' or value is None or str(value) == 'nan':
+                continue
+
             time = entry["ActivityStartDate"].rstrip()
             station = (entry["MonitoringLocationIdentifier"]
                        .replace("&", "and").replace("#", "-"))
             name = (str(entry["MonitoringLocationName"])
                     .replace("&", "and").replace("#", "-"))
-            #type_name = entry["MonitoringLocationTypeName"]
             description = str(entry["SampleCollectionMethod/MethodDescriptionText"])
             organization = entry["OrganizationFormalName"]
-            measure = entry["CharacteristicName"]
+            characteristic = entry["CharacteristicName"]
             unit = entry["ResultMeasure/MeasureUnitCode"]
-            try:
-                value = float(entry["ResultMeasureValue"])
-            except:
-                value = entry["ResultMeasureValue"]
-            if value == '' or str(value) == 'nan': continue
+            if str(unit) == 'nan':
+                unit = ''
+            if unit == 'ug/L':
+                # Convert micrograms to milligrams
+                value /= 1000
+                unit = 'mg/L'
+            measure = (f"{characteristic} {unit}".lower()
+                       .replace(" ", "-").replace("/", "").replace("*", "").replace("+", ""))
 
             # Determine location
             latitude = float(entry["ActivityLocation/LatitudeMeasure"])
             longitude = float(entry["ActivityLocation/LongitudeMeasure"])
+            if str(latitude) == 'nan' or str(longitude) == 'nan':
+                continue
             try:
                 huc8 = getHuc8(latitude, longitude)
             except:
                 # TODO: Can we salvage these somehow?
+                huc8 = "00000000"
                 continue
 
-            if measure not in targets:
-                for parent in gapfills:
-                    if measure in gapfills[parent]:
-                        measure = f"{parent} (gapfill)"
-                        break
-                continue
+            # if measure not in targets:
+            #     for parent in gapfills:
+            #         if measure in gapfills[parent]:
+            #             measure = f"{parent} (gapfill)"
+            #             break
+            #     continue
 
             if station not in stations:
                 stations[station] = {
@@ -244,7 +243,6 @@ for state_id in state_ids:
                         },
                         "MonitoringLocationIdentifier": station,
                         "MonitoringLocationName": name,
-                        #"MonitoringLocationTypeName": type_name,
                         "MonitoringLocationDescriptionText": description,
                         "HUC8": huc8,
                         "OrganizationFormalName": organization
@@ -260,114 +258,134 @@ for state_id in state_ids:
                 alldata[station] = {}
             if measure not in alldata[station]:
                 alldata[station][measure] = []
-            if measure not in units:
-                units[measure] = unit
+            if measure not in params:
+                params[measure] = {
+                    "characteristic": characteristic,
+                    "unit": unit
+                }
 
             # Check if we can add to existing record
             found_existing = False
-            if measure.endswith(" (gapfill)"):
-                for existing_entry in alldata[station][measure]:
-                    if existing_entry["x"] == time:
-                        found_existing = True
-                        try:
-                            existing_entry["y"] += value
-                        except TypeError: continue
+            # if measure.endswith(" (gapfill)"):
+            #     for existing_entry in alldata[station][measure]:
+            #         if existing_entry["x"] == time:
+            #             found_existing = True
+            #             try:
+            #                 existing_entry["y"] += value
+            #             except TypeError: continue
             if not found_existing:
                 alldata[station][measure].append({
                     "x": time,
                     "y": value
                 })
+    print(f"Done scanning {len(stations)} stations")
 
-        for station in stations:
-            # Skip stations with < 5 years data
-            years = []
-            for measure in alldata[station]:
-                for obs in alldata[station][measure]:
-                    obs_year = obs["x"].split("-")[0]
-                    if obs_year not in years:
-                        years.append(obs_year)
-            if len(set(years)) < 5:
-                continue
+    # Create parameters
+    found_params = []
+    for station in stations:
+        for measure in alldata[station]:
+            if measure not in found_params:
+                found_params.append(measure)
+    for meas in found_params:
+        get_or_create_parameter(meas, {
+                'name': meas,
+                'title': params[meas]['characteristic'],
+                'unit': params[meas]["unit"],
+                'search_view': True,
+                'explore_view': True,
+                'scale_names': None,
+                'scale_colors': None,
+            },
+            categories=[{"name": "Water Quality", "detail_type": "time"}])
 
-            # Create station if necessary
-            sensor_id = get_or_create_sensor(station, stations[station])['id']
-            stations[station]["properties"]["sensor_id"] = sensor_id
+    small_skips = 0
+    for station in stations:
+        # Skip stations with < 5 years data
+        years = []
+        for measure in alldata[station]:
+            for obs in alldata[station][measure]:
+                obs_year = obs["x"].split("-")[0]
+                if obs_year not in years:
+                    years.append(obs_year)
+        if len(set(years)) < 5:
+            small_skips += 1
+            continue
 
-            """
-            print(f"[{station}] Preparing gap-filled dataset")
-            # Generate gap-filled versions where possible
-            alldata_gapfill = {}
-            for measure in alldata[station]:
-                if measure.endswith(" (gapfill)"):
-                    continue  # These will be referenced by parent measure
-                gapfill_measure = f"{measure} (gapfill)"
-                alldata_gapfill[measure] = alldata[station][measure]
-                if measure in gapfills:
-                    measure_dates = []
-                    for entry in alldata[station][measure]:
-                        measure_dates.append(entry["x"])
-                    if gapfill_measure in alldata[station]:
-                        for entry in alldata[station][gapfill_measure]:
-                            if entry["x"] not in measure_dates:
-                                if measure not in alldata_gapfill:
-                                    alldata_gapfill[measure] = []
-                                alldata_gapfill[measure].append(entry)
-        
-            # Iterate over outputs sorted by time and create datapoints
-            for measure in alldata_gapfill:
-                observations = sorted(alldata_gapfill[measure], key=lambda x: x["x"])
-            """
+        # Create station if necessary
+        sensor_id = get_or_create_sensor(station, stations[station])['id']
+        stations[station]["properties"]["sensor_id"] = sensor_id
 
-            properties = stations[station]["properties"]
-            for measure in alldata[station]:
-                observations = sorted(alldata[station][measure], key=lambda x: x["x"])
-                print(f"...{measure}")
+        """
+        print(f"[{station}] Preparing gap-filled dataset")
+        # Generate gap-filled versions where possible
+        alldata_gapfill = {}
+        for measure in alldata[station]:
+            if measure.endswith(" (gapfill)"):
+                continue  # These will be referenced by parent measure
+            gapfill_measure = f"{measure} (gapfill)"
+            alldata_gapfill[measure] = alldata[station][measure]
+            if measure in gapfills:
+                measure_dates = []
+                for entry in alldata[station][measure]:
+                    measure_dates.append(entry["x"])
+                if gapfill_measure in alldata[station]:
+                    for entry in alldata[station][gapfill_measure]:
+                        if entry["x"] not in measure_dates:
+                            if measure not in alldata_gapfill:
+                                alldata_gapfill[measure] = []
+                            alldata_gapfill[measure].append(entry)
+    
+        # Iterate over outputs sorted by time and create datapoints
+        for measure in alldata_gapfill:
+            observations = sorted(alldata_gapfill[measure], key=lambda x: x["x"])
+        """
 
-                # parameter_id = get_or_create_parameter(measure, {
-                #     'name': measure,
-                #     'title': measure,
-                #     'unit': units[measure]
-                # })["id"]
+        properties = stations[station]["properties"]
+        for measure in alldata[station]:
+            observations = sorted(alldata[station][measure], key=lambda x: x["x"])
+            print(f"...{measure}")
 
-                stream_name = f"{station} - {measure}"
-                stream_data = {
-                    "sensor_id": sensor_id,
-                    "name": stream_name,
-                    "type": "Feature",
-                    "geometry": stations[station]['geometry'],
-                    "properties": properties,
-                    # "parameters": [measure]
-                }
-                stream = get_or_create_stream(stream_name, stream_data)
-                stream_id = stream["id"]
-                latest_datapoint = stream["end_time"]
-                new_latest = latest_datapoint
+            stream_name = f"{station} - {measure}"
+            stream_data = {
+                "sensor_id": sensor_id,
+                "name": stream_name,
+                "type": "Feature",
+                "geometry": stations[station]['geometry'],
+                "properties": properties,
+                "parameters": [measure]
+            }
+            stream = get_or_create_stream(stream_name, stream_data)
+            stream_id = stream["id"]
+            latest_datapoint = stream["end_time"]
+            new_latest = latest_datapoint
 
-                datapoints = []
-                for observation in observations:
-                    if observation["x"] <= new_latest and new_latest != "N/A":
-                        continue
-                    if str(observation["y"]) == "nan": continue
-                    new_latest = observation["x"]
-                    datapoints.append({
-                        'start_time': observation["x"] + "T00:00:00Z",
-                        'end_time': observation["x"] + "T00:00:00Z",
-                        'type': 'Feature',
-                        'geometry': stations[station]['geometry'],
-                        'stream_id': stream_id,
-                        'sensor_id': sensor_id,
-                        'sensor_name': properties["MonitoringLocationName"],
-                        "properties": {
-                            measure: observation["y"]
-                        }
-                    })
-                    if len(datapoints) > 200:
-                        post_bulk_datapoints(stream_id, datapoints)
-                        datapoints = []
-                if len(datapoints) > 0:
+            datapoints = []
+            for observation in observations:
+                if observation["x"] <= new_latest and new_latest != "N/A":
+                    continue
+                if str(observation["y"]) == "nan": continue
+                new_latest = observation["x"]
+                datapoints.append({
+                    'start_time': observation["x"] + "T00:00:00Z",
+                    'end_time': observation["x"] + "T00:00:00Z",
+                    'type': 'Feature',
+                    'geometry': stations[station]['geometry'],
+                    'stream_id': stream_id,
+                    'sensor_id': sensor_id,
+                    'sensor_name': properties["MonitoringLocationName"],
+                    "properties": {
+                        measure: observation["y"]
+                    }
+                })
+                if len(datapoints) > 200:
                     post_bulk_datapoints(stream_id, datapoints)
+                    datapoints = []
+            if len(datapoints) > 0:
+                post_bulk_datapoints(stream_id, datapoints)
 
-                # Update cache/bins for stream
-                # url = f"{geostreams_api}cache?sensor_id={sensor_id}&parameter={measure}"
-                # resp = requests.post(url, headers=headers)
-                # resp.raise_for_status()
+            # Update cache/bins for stream
+            url = f"{geostreams_api}cache?sensor_id={sensor_id}&parameter={measure}"
+            resp = requests.post(url, headers=headers)
+            resp.raise_for_status()
+
+    print(f"...skipped {small_skips} stations with < 5 years data")
