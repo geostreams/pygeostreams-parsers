@@ -359,6 +359,9 @@ for state_id in state_ids:
             latest_datapoint = stream["end_time"]
             new_latest = latest_datapoint
 
+            # TODO: If parameters didn't register properly...
+            # update streams set params=CONCAT('{', split_part("name",' - ',2), '}')::text[];
+
             datapoints = []
             for observation in observations:
                 if observation["x"] <= new_latest and new_latest != "N/A":
@@ -383,9 +386,14 @@ for state_id in state_ids:
             if len(datapoints) > 0:
                 post_bulk_datapoints(stream_id, datapoints)
 
-            # Update cache/bins for stream
-            url = f"{geostreams_api}cache?sensor_id={sensor_id}&parameter={measure}"
-            resp = requests.post(url, headers=headers)
-            resp.raise_for_status()
-
     print(f"...skipped {small_skips} stations with < 5 years data")
+
+# Update cache/bins for all sensors
+url = f"{geostreams_api}sensors"
+resp = requests.get(url, headers=headers)
+resp.raise_for_status()
+sens = resp.json()['sensors']
+for s in sens:
+    url = f"{geostreams_api}cache?sensor_id={s["id"]}"
+    resp = requests.post(url, headers=headers)
+    resp.raise_for_status()
