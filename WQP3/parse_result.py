@@ -1,14 +1,15 @@
 import os
 import requests
 import zipfile
+import subprocess
 import pandas as pd
 from geopandas import GeoDataFrame
 from geopandas.tools import sjoin
 from shapely import wkt
 
-geostreams_api = "http://localhost:9004/api/"  # https://greatlakestogulf.org/geostreams/api/
 geostreams_user = "mburnet2@illinois.edu"
-geostreams_password = "password"
+geostreams_api = "https://gltg.ncsa.illinois.edu/geostreams/api/"
+
 
 state_ids = {
     "05": "AR",
@@ -40,25 +41,53 @@ gapfills = {
 
 huc_data = GeoDataFrame.from_file('../huc_finder/huc-all.shp')
 
+# Fetch most recent datapoint timestamp from geostreams
+# url = f"{geostreams_api}authenticate"
+# resp = requests.post(url, json={'identifier': geostreams_user, 'password': geostreams_password},
+#                      headers={'Content-Type': 'application/json'})
+# resp.raise_for_status()
+# token = resp.headers["x-auth-token"]
+# headers = {'X-Auth-Token': token, 'Content-type': 'application/json'}
+# url = f"{geostreams_api}streams"
+# response = requests.get(url)
+# response.raise_for_status()
+# results = response.json()['streams']
+# most_recent = None
+# for result in results:
+#     if result["end_time"] == "N/A":
+#         continue
+#     if most_recent is None or result["end_time"] > most_recent:
+#         most_recent = result["end_time"]
+# if most_recent is None:
+#     print("No start time found; using default")
+#     start = "05-28-2025"
+# else:
+#     start = f"{most_recent[5:7]}-{most_recent[8:10]}-{most_recent[:4]}"
+
+# LAST RUN: 09-24-2025
+start = "05-28-2025"
+
 # Fetch data from WQP
 base_url = 'https://www.waterqualitydata.us/data/Result/search?mimeType=csv&zip=yes'
 dl_headers = {'Content-Type': 'application/json', 'Accept': 'application/zip'}
 for state_id in state_ids:
     # Physical query
     state_abbrev = state_ids[state_id]
-    outzip = f"{state_abbrev}_all_1970.zip"
+    outzip = f"{state_abbrev}_nutrients_{start}.zip"
     outfile = outzip.replace("zip", "csv")
     if not os.path.exists(outfile):
-        continue
-
         print(f"Downloading {outfile}")
         cmd = "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/zip' "
-        cmd += f'-d \'{"statecode":["US:{state_id}"],"siteType":["Stream"],"characteristicName":["Nitrogen","Phosphorus","pH","Stream flow"],"startDateLo":"01-01-1970","dataProfile":"resultPhysChem","providers":["NWIS","STORET"]}\''
-        cmd += f"'https://www.waterqualitydata.us/data/Result/search?mimeType=csv&zip=yes' --output {outzip}"
+        cmd += '-d \'{"statecode":["US:'+state_id+'"],"siteType":["Stream"],"characteristicType": ["Nutrient"],"startDateLo":"'+start+'","dataProfile":"resultPhysChem","providers":["NWIS","STORET"]}\' '
+        cmd += "'https://www.waterqualitydata.us/data/Result/search?mimeType=csv&zip=yes' --output " + outzip
+        print(cmd)
+        subprocess.call(cmd, shell=True)
+
         with zipfile.ZipFile(outzip, "r") as zip_ref:
             zip_ref.extractall()
         os.remove(outzip)
         os.rename("resultphyschem.csv", outfile)
+
 
 # Get a token from geostreams
 url = f"{geostreams_api}authenticate"
@@ -161,8 +190,8 @@ for state_id in state_ids:
     alldata = {}
     params = {}
 
-    for trait in ["chem", "phys", "all"]:
-        data_file = f"{state_abbrev}_{trait}_1970.csv"
+    for trait in ["nutrients"]: # , "chem", "phys", "all"]:
+        data_file = f"{state_abbrev}_{trait}_{start}.csv"
         if not os.path.exists(data_file):
             print(f"{data_file} does not exist")
             continue
@@ -170,7 +199,8 @@ for state_id in state_ids:
         # Load & filter dataframe
         print(f"Scanning {data_file}")
         df = pd.read_csv(data_file, low_memory=False)
-        df = df[df['CharacteristicName'].isin(all_targets)]
+        # df = df[df['CharacteristicName'].isin(all_targets)]
+        # df = df[df['CharacteristicName'] == 'Nitrogen']
         # df = df[(df['ResultSampleFractionText'] == 'Total') |
         #          (df['ResultSampleFractionText'].isnull())]
         # df = df[(df['ResultMeasure/MeasureUnitCode'] == 'mg/l') |
@@ -179,19 +209,22 @@ for state_id in state_ids:
         #         (df['ResultMeasure/MeasureUnitCode'] == 'std units') |
         #         (df['ResultMeasure/MeasureUnitCode'] == 'm3/sec')]
 
+        bad_values = 0
+        no_xy = 0
         for i, entry in df.iterrows():
             try:
                 value = float(entry["ResultMeasureValue"])
             except:
                 value = entry["ResultMeasureValue"]
             if value == '' or value is None or str(value) == 'nan':
+                bad_values += 1
                 continue
 
             time = entry["ActivityStartDate"].rstrip()
             station = (entry["MonitoringLocationIdentifier"]
-                       .replace("&", "and").replace("#", "-"))
+                       .replace("&", "and").replace("#", "-").replace("(","").replace(")","").replace(",", "").replace("&", "and"))
             name = (str(entry["MonitoringLocationName"])
-                    .replace("&", "and").replace("#", "-"))
+                    .replace("&", "and").replace("#", "-").replace("(","").replace(")","").replace(",", "").replace("&", "and"))
             description = str(entry["SampleCollectionMethod/MethodDescriptionText"])
             organization = entry["OrganizationFormalName"]
             characteristic = entry["CharacteristicName"]
@@ -203,19 +236,20 @@ for state_id in state_ids:
                 value /= 1000
                 unit = 'mg/L'
             measure = (f"{characteristic} {unit}".lower()
-                       .replace(" ", "-").replace("/", "").replace("*", "").replace("+", ""))
+                       .replace(" ", "-").replace("/", "").replace("*", "").replace("+", "")
+                       .replace("(","").replace(")","").replace(",", "").replace("&", "and"))
 
             # Determine location
             latitude = float(entry["ActivityLocation/LatitudeMeasure"])
             longitude = float(entry["ActivityLocation/LongitudeMeasure"])
             if str(latitude) == 'nan' or str(longitude) == 'nan':
+                no_xy += 1
                 continue
             try:
                 huc8 = getHuc8(latitude, longitude)
             except:
                 # TODO: Can we salvage these somehow?
                 huc8 = "00000000"
-                continue
 
             # if measure not in targets:
             #     for parent in gapfills:
@@ -279,6 +313,15 @@ for state_id in state_ids:
                     "y": value
                 })
     print(f"Done scanning {len(stations)} stations")
+    print(f"Skips: {bad_values} bad values, {no_xy} no xy points")
+
+    # get fresh geostreams token
+    url = f"{geostreams_api}authenticate"
+    resp = requests.post(url, json={'identifier': geostreams_user, 'password': geostreams_password},
+                         headers={'Content-Type': 'application/json'})
+    resp.raise_for_status()
+    token = resp.headers["x-auth-token"]
+    headers = {'X-Auth-Token': token, 'Content-type': 'application/json'}
 
     # Create parameters
     found_params = []
@@ -286,6 +329,7 @@ for state_id in state_ids:
         for measure in alldata[station]:
             if measure not in found_params:
                 found_params.append(measure)
+    print(f"Found params: {found_params}")
     for meas in found_params:
         get_or_create_parameter(meas, {
                 'name': meas,
@@ -345,6 +389,7 @@ for state_id in state_ids:
             observations = sorted(alldata[station][measure], key=lambda x: x["x"])
             print(f"...{measure}")
 
+            # TODO: in v3, can we move to one stream per station with all parameters?
             stream_name = f"{station} - {measure}"
             stream_data = {
                 "sensor_id": sensor_id,
@@ -388,12 +433,68 @@ for state_id in state_ids:
 
     print(f"...skipped {small_skips} stations with < 5 years data")
 
+
 # Update cache/bins for all sensors
+print(f"Updating stats/caches/bins...")
 url = f"{geostreams_api}sensors"
 resp = requests.get(url, headers=headers)
 resp.raise_for_status()
 sens = resp.json()['sensors']
+
+param_url = f"{geostreams_api}parameters"
+response = requests.get(param_url)
+response.raise_for_status()
+parameters = response.json()['parameters']
+
+#found = True
+#mins = 15133
+#for s in [{'id':15830}]:
 for s in sens:
-    url = f"{geostreams_api}cache?sensor_id={s["id"]}"
-    resp = requests.post(url, headers=headers)
+    """ TYPES
+             usgs-sg *
+             usgs *
+             wqp *
+             umrr-ltrm *
+             sierra-club * (foxriver)
+
+             OLD
+             sierra-club
+             noaa
+             illinois-epa
+             tennessee
+             greon
+             iwqis
+             gac
+             metc
+             epa
+    """
+    if s['properties']['type']['id'] != 'sierra-club':
+        continue
+    # if found == False:
+    #     if str(mins) == str(s['id']):
+    #         found = True
+    #     continue
+
+    # Update stats for all streams
+    url = f"{geostreams_api}sensors/{s['id']}/streams"
+    resp = requests.get(url, headers=headers)
     resp.raise_for_status()
+    streams = resp.json()['streams']
+    for s in streams:
+        url = f"{geostreams_api}streams/{s['id']}/update"
+        try:
+            resp = requests.get(url, headers=headers)
+            resp.raise_for_status()
+        except Exception as e:
+            print(e)
+            continue
+
+    for p in parameters:
+        url = f"{geostreams_api}cache?sensor_id={s['id']}&parameter={p['name']}"
+        try:
+            resp = requests.post(url, headers=headers)
+            resp.raise_for_status()
+        except Exception as e:
+            continue
+
+print("Done.")
